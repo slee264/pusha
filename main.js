@@ -3,15 +3,12 @@ import fs from 'fs';
 import bodyParser from 'body-parser';
 // import schedule from 'node-schedule';
 import Busboy from 'busboy';
-import { Agenda } from 'agenda'
 
 import { __dirname } from './utils.js';
-import { setup } from './firebase/firebase.js';
-import { mongo_setup } from './mongodb.js';
+import { firebase_setup } from './firebase/firebase.js';
 import { agenda } from './agenda/agenda.js'
 
 const app = express();
-const mongo_client = mongo_setup();
 
 // create application/json parser
 var jsonParser = bodyParser.json();
@@ -19,7 +16,7 @@ var jsonParser = bodyParser.json();
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-let fb_app;
+let fb_app = firebase_setup();
 
 app.use(express.static(__dirname))
 
@@ -35,8 +32,16 @@ app.post("/", (req, res) => {
             try{
                 const decoder = new TextDecoder('utf-8');
                 const data_json = JSON.parse(decoder.decode(data));
-                fb_app = setup(data_json);
-                console.log(fb_app);
+                // fb_app = setup(data_json);
+                // agenda
+                // .on("ready", async () => {
+                //   await agenda.start();
+                //   console.log("Agenda started!");
+                //   await allDefinitions(agenda)
+                //   console.log({ jobs: agenda._definitions });
+                //   await schedule.sendMessage({"title": "title1", "body": "body1", "device_token": 'DDbbPmIC19S6Xc:APA91bFal4eE8jWpZcGQwsGQBcIIsh_8Fg0F7A1k1pINLqHawTJvPYQqVRiWHDUBGWX5b4oj2uoMJFW4AxtFOH4r75xHpbYDkDsgeQEP8xZA7A_erfooyTbsVb0AyPi-2VaBrsn2hcTa'});
+                // })
+                // .on("error", () => console.log("Agenda connection error!"));
             }catch(err) {
                 if (err.errorInfo.code === 'app/invalid-credential'){
                     valid_credentials = false;
@@ -67,7 +72,7 @@ app.post("/scheduler", urlencodedParser, (req, res) => {
   console.log(req.body);
 })
 
-app.listen(3000, () => {
+app.listen(4000, () => {
     console.log("Application listening on port 3000")
 })
 

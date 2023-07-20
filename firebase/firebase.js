@@ -2,11 +2,15 @@ import admin from 'firebase-admin';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { getMessaging } from 'firebase-admin/messaging';
 
-export function setup(file_path){
+function firebase_setup(file_path){
+    // const firebase_app = initializeApp({
+    //     credential: admin.credential.cert(file_path)
+    // });
+  
     const firebase_app = initializeApp({
-        credential: admin.credential.cert(file_path)
+        credential: applicationDefault()
     });
-    
+
     return firebase_app;
 }
 
@@ -17,10 +21,10 @@ const message = {
         score: '850',
         time: '2:45'
     },
-        token: registrationToken
+    token: registrationToken
 };
 
-export function send(message) {
+function send(message) {
     getMessaging().send(message)
     .then((response) => {
         // Response is a message ID string.
@@ -30,3 +34,5 @@ export function send(message) {
         console.log('Error sending message:', error);
     });
 }
+
+export { firebase_setup, send }

@@ -1,6 +1,6 @@
-import { testsDefinitions } from './tests.js';
+import { messageDefinitions } from './message.js';
 
-const definitions = [testsDefinitions];
+const definitions = [messageDefinitions];
 
 const allDefinitions = (agenda) => {
   console.log("agenda/index.js")
