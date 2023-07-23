@@ -16,66 +16,37 @@
         if (repeatCheckboxBtn.checked){
           repeatCheckboxBtnLabel.innerHTML = "Repeats"
           document.getElementById('scheduler-form').innerHTML = 
-            '<input type=\"hidden\" name=\"type\" value=\"one-time-push-form\" />\
+            '<input type=\"hidden\" name=\"type\" value=\"repeat-push-form\" />\
             <input type=\"radio\" id=\"dayRadioBtn\" value=\"day\">\
             <label for=\"dayRadioBtn\">day(s)</label>\
             <input type=\"radio\" id=\"weekRadioBtn\" value=\"week\">\
             <label for=\
 "weekRadioBtn\">week(s)</label>\
             <input type=\"radio\" id=\"monthRadioBtn\" value=\"month\">\
-            <label for=\"monthRadioBtn\">month(s)</label>'
+            <label for=\"monthRadioBtn\">month(s)</label>\
+            <input class=\"subscribe-button\" type=\"submit\" value=\"Subscribe\">'
         }else{
           repeatCheckboxBtnLabel.innerHTML = "Does not repeat"
           document.getElementById('scheduler-form').innerHTML = 
-            '<input type=\"hidden\" name=\"type\" value=\"repeat-push-form\" />\
+            '<input type=\"hidden\" name=\"type\" value=\"one-time-push-form\" />\
               <input name=\"second\" placeholder=\"second\" type=\"number\" id=\"second\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Second should be between 0 and 59.\')\">\
               <input name=\"minute\" placeholder=\"minute\" type=\"number\" id=\"minute\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Minute should be between 0 and 59.\')\">\
               <input name=\"hour\" placeholder=\"hour\" type=\"number\" id=\"hour\" min=\"0\" max=\"23\" oninvalid = \"setCustomValidity(\'Hour should be between 0 and 23.\')\">\
-              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\">'
+              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\">\
+              <input class=\"subscribe-button\" type=\"submit\" value=\"Subscribe\">'
         }
       }
     </script>
     <input type="checkbox" id="repeatCheckboxBtn" onchange="repeatCheckboxLabel()">
     <label for="repeatCheckboxBtn" id="repeatCheckboxBtnLabel"> Does not repeat </label>
     <form method="POST" id="scheduler-form">
-    </form>
-    <!-- <form method="POST">
-      <div>
-          ONE-TIME PUSH
-      </div>
       <input type="hidden" name="type" value="one-time-push-form" />
       <input name="second" placeholder="second" type="number" id="second" min="0" max="59" oninvalid = "setCustomValidity('Second should be between 0 and 59.')">
       <input name="minute" placeholder="minute" type="number" id="minute" min="0" max="59" oninvalid = "setCustomValidity('Minute should be between 0 and 59.')">
       <input name="hour" placeholder="hour" type="number" id="hour" min="0" max="23" oninvalid = "setCustomValidity('Hour should be between 0 and 23.')">
       <input name="date" placeholder="date" type="date" id="dateId">
-      <script type="text/javascript">
-        dateId.min = new Date().toISOString().split("T")[0];
-      </script>
       <input class="subscribe-button" type="submit" value="Subscribe">
     </form>
-    <form method="POST">
-      <div>
-          RECURRING PUSH
-      </div>
-      <input type="hidden" name="type" value="recur-push-form" />
-      <input type="checkbox" name="Monday" id="recurDay" onchange="setScheduleStr()">
-      <label for="monday"> Monday </label>
-      <input type="checkbox" name="Tuesday" id="recurDay" onchange="setScheduleStr()">
-      <label for="tuesday"> Tuesday </label>
-      <input type="checkbox" name="Wednesday" id="recurDay" onchange="setScheduleStr()">
-      <label for="wednesday"> Wednesday </label>
-      <input type="checkbox" name="Thursday" id="recurDay" onchange="setScheduleStr()">
-      <label for="thursday"> Thursday </label>
-      <input type="checkbox" name="Friday" id="recurDay" onchange="setScheduleStr()">
-      <label for="friday"> Friday </label>
-      <input type="checkbox" name="Saturday" id="recurDay" onchange="setScheduleStr()">
-      <label for="saturday"> Saturday </label>
-      <input type="checkbox" name="Sunday" id="recurDay" onchange="setScheduleStr()">
-      <label for="sunday"> Sunday </label>
-      <input name="hour" onchange="setScheduleStr()" value="0" placeholder="hour" type="number" id="recurHour" min="0" max="23" oninvalid = "setCustomValidity('Hour should be between 0 and 23.')">
-      <input name="minute" onchange="setScheduleStr()" value="0" placeholder="minute" type="number" id="recurMinute" min="0" max="59" oninvalid = "setCustomValidity('Minute should be between 0 and 59.')">
-      <input class="subscribe-button" type="submit" value="Subscribe">
-    </form> -->
     <div id="scheduleStr">
       
     </div>

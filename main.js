@@ -3,10 +3,12 @@ import fs from 'fs';
 import bodyParser from 'body-parser';
 // import schedule from 'node-schedule';
 import Busboy from 'busboy';
+import moment from 'moment-timezone';
+import { DateTime } from 'luxon';
 
 import { __dirname } from './utils.js';
 import { firebase_setup } from './firebase/firebase.js';
-import { agenda } from './agenda/agenda.js'
+import { setup_agenda, definitions, scheduleJob } from './agenda/agenda.js'
 
 const app = express();
 
@@ -16,7 +18,8 @@ var jsonParser = bodyParser.json();
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-let fb_app = firebase_setup();
+let fb_app;
+let agenda;
 
 app.use(express.static(__dirname))
 
@@ -28,24 +31,20 @@ app.post("/", (req, res) => {
     var busboy = Busboy({ headers: req.headers });
     let valid_credentials = true;
     busboy.on("file", (name, file, info) => {
-        file.on("data", (data) => {
+        file.on("data", async (data) => {
             try{
-                const decoder = new TextDecoder('utf-8');
-                const data_json = JSON.parse(decoder.decode(data));
-                // fb_app = setup(data_json);
-                // agenda
-                // .on("ready", async () => {
-                //   await agenda.start();
-                //   console.log("Agenda started!");
-                //   await allDefinitions(agenda)
-                //   console.log({ jobs: agenda._definitions });
-                //   await schedule.sendMessage({"title": "title1", "body": "body1", "device_token": 'DDbbPmIC19S6Xc:APA91bFal4eE8jWpZcGQwsGQBcIIsh_8Fg0F7A1k1pINLqHawTJvPYQqVRiWHDUBGWX5b4oj2uoMJFW4AxtFOH4r75xHpbYDkDsgeQEP8xZA7A_erfooyTbsVb0AyPi-2VaBrsn2hcTa'});
-                // })
-                // .on("error", () => console.log("Agenda connection error!"));
+              const decoder = new TextDecoder('utf-8');
+              const data_json = JSON.parse(decoder.decode(data));
+              fb_app = await firebase_setup(data_json);
+              agenda = await setup_agenda();
+              agenda
+              .on("ready", async () => {
+                console.log(await agenda.jobs())
+              })
             }catch(err) {
-                if (err.errorInfo.code === 'app/invalid-credential'){
-                    valid_credentials = false;
-                }
+              if (err.errorInfo.code === 'app/invalid-credential'){
+                valid_credentials = false;
+              }
             }
         })
     })
@@ -63,16 +62,25 @@ app.post("/", (req, res) => {
 
 })
 
-app.get("/scheduler", (req, res) => {
-  
+app.get("/scheduler", async (req, res) => {
+  // console.log(agenda);
   res.sendFile( __dirname + "/forms/scheduler.html")
 })
 
-app.post("/scheduler", urlencodedParser, (req, res) => {
-  console.log(req.body);
+app.post("/scheduler", urlencodedParser, async (req, res) => {
+  await definitions(agenda);
+  const { second, minute, hour, date} = req.body;
+  const date_time_local = new Date(date);
+  const timezone_offset = date_time_local.getTimezoneOffset();
+  date_time_local.setHours(hour);
+  date_time_local.setMinutes(minute);
+  date_time_local.setSeconds(second);
+  await scheduleJob(agenda, {"title": "test title", "body": "test body", "time": date_time_local, "device_token": "eRCZR9c5w5n69pl5mSUwTL:APA91bFkZVs6ZXCUchonXYJ6LQIkpjg2tHqZhJij-1rO_rQLdHlR5NErXZErlqjhjZceAZxiuD2bDo9viV7nZHxDcRx7tYi7efQ3W_nHe_j8OB57cyhEvNp44TVLFqIZJqJo-hsJn-Js"})
+  console.log(await agenda.jobs())
+  res.send(req.body);
 })
 
-app.listen(4000, () => {
+app.listen(3000, () => {
     console.log("Application listening on port 3000")
 })
 

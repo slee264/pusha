@@ -1,9 +1,8 @@
-import { agenda } from './agenda.js';
-
 const schedule = {
-  sendMessage: async (data) => {
+  sendMessage: async (agenda, data) => {
+    const { title, body, device_token, time } = data;
     console.log("scheduling sendMessage");
-    await agenda.every("1 minute", "sendPushNotification", data)
+    await agenda.schedule("in 1 minutes", "sendPushNotification", {title, body, device_token})
   }
 }
 

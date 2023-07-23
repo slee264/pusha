@@ -11,7 +11,7 @@ const JobHandlers = {
       token: data.device_token
     }
     send(message);
-    // console.log("message sent")
+    console.log("message sent")
     done();
   }
 }
