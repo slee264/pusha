@@ -12,18 +12,44 @@
   <header> Scheduler </header><br>
   <div class="scheduler-container">
     <script>
-      function repeatCheckboxLabel(){
+      function repeatSelectOnChange(val){
+        switch(val){
+          case "month":
+            document.getElementById("repeat-push-subform").innerHTML = "MONTH"
+            break;
+          case "week":
+            document.getElementById("repeat-push-subform").innerHTML = "WEEK"
+            break;
+          case "day":
+            document.getElementById("repeat-push-subform").innerHTML = "DAY"
+            break;
+          case "hour": 
+            document.getElementById("repeat-push-subform").innerHTML = "HOUR"
+            break;
+          case "minute":
+            document.getElementById("repeat-push-subform").innerHTML = "MINUTE"
+            break;
+        }
+      }
+      function repeatCheckboxLabelOnChange(){
         if (repeatCheckboxBtn.checked){
           repeatCheckboxBtnLabel.innerHTML = "Repeats"
           document.getElementById('scheduler-form').innerHTML = 
-            '<input type=\"hidden\" name=\"type\" value=\"repeat-push-form\" />\
-            <input type=\"radio\" id=\"dayRadioBtn\" value=\"day\">\
-            <label for=\"dayRadioBtn\">day(s)</label>\
-            <input type=\"radio\" id=\"weekRadioBtn\" value=\"week\">\
-            <label for=\
-"weekRadioBtn\">week(s)</label>\
-            <input type=\"radio\" id=\"monthRadioBtn\" value=\"month\">\
-            <label for=\"monthRadioBtn\">month(s)</label>\
+            '<label for=\"repeat_options\">Choose one:</label>\
+            <input type=\"hidden\" name=\"type\" value=\"repeat-push-form\" />\
+            <select id="\repeatSelectId\", name=\"repeatSelect\" onchange=\"repeatSelectOnChange(this.value)\" default>\
+              <option value=\"month\"> month </option>\
+              <option value=\"week\"> week </option>\
+              <option value=\"day\"> day </option>\
+              <option value=\"hour\"> hour </option>\
+              <option value=\"minute\" selected> day </option>\
+            <select>\<br/>\
+            <div id=\"repeat-push-subform\">\
+              <input name=\"second\" placeholder=\"second\" type=\"number\" id=\"second\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Second should be between 0 and 59.\')\">\
+              <input name=\"minute\" placeholder=\"minute\" type=\"number\" id=\"minute\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Minute should be between 0 and 59.\')\">\
+              <input name=\"hour\" placeholder=\"hour\" type=\"number\" id=\"hour\" min=\"0\" max=\"23\" oninvalid = \"setCustomValidity(\'Hour should be between 0 and 23.\')\">\
+              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\">\
+            </div>\
             <input class=\"subscribe-button\" type=\"submit\" value=\"Subscribe\">'
         }else{
           repeatCheckboxBtnLabel.innerHTML = "Does not repeat"
@@ -36,8 +62,9 @@
               <input class=\"subscribe-button\" type=\"submit\" value=\"Subscribe\">'
         }
       }
+      
     </script>
-    <input type="checkbox" id="repeatCheckboxBtn" onchange="repeatCheckboxLabel()">
+    <input type="checkbox" id="repeatCheckboxBtn" onchange="repeatCheckboxLabelOnChange()">
     <label for="repeatCheckboxBtn" id="repeatCheckboxBtnLabel"> Does not repeat </label>
     <form method="POST" id="scheduler-form">
       <input type="hidden" name="type" value="one-time-push-form" />

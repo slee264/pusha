@@ -2,7 +2,6 @@ import Agenda from 'agenda'
 import 'dotenv/config'
 import { allDefinitions } from './definitions/index.js'
 import { schedule } from './scheduler.js'
-// import { mongo_setup } from '../mongodb.js';
 
 async function setup_agenda(){
   try{
