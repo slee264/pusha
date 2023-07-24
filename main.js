@@ -3,8 +3,6 @@ import fs from 'fs';
 import bodyParser from 'body-parser';
 // import schedule from 'node-schedule';
 import Busboy from 'busboy';
-import moment from 'moment-timezone';
-import { DateTime } from 'luxon';
 
 import { __dirname } from './utils.js';
 import { firebase_setup } from './firebase/firebase.js';
@@ -69,14 +67,18 @@ app.get("/scheduler", async (req, res) => {
 
 app.post("/scheduler", urlencodedParser, async (req, res) => {
   await definitions(agenda);
-  const { second, minute, hour, date} = req.body;
+  const { repeatInterval, repeat, second, minute, hour, date} = req.body;
   const date_time_local = new Date(date);
   const timezone_offset = date_time_local.getTimezoneOffset();
   date_time_local.setHours(hour);
   date_time_local.setMinutes(minute);
   date_time_local.setSeconds(second);
-  await scheduleJob(agenda, {"title": "test title", "body": "test body", "time": date_time_local, "device_token": "eRCZR9c5w5n69pl5mSUwTL:APA91bFkZVs6ZXCUchonXYJ6LQIkpjg2tHqZhJij-1rO_rQLdHlR5NErXZErlqjhjZceAZxiuD2bDo9viV7nZHxDcRx7tYi7efQ3W_nHe_j8OB57cyhEvNp44TVLFqIZJqJo-hsJn-Js"})
-  console.log(await agenda.jobs())
+  const schedule = {
+    repeat: repeat,
+    repeatInterval: repeatInterval,
+    time: date_time_local
+  }
+  await scheduleJob(agenda, {"title": "test title", "body": "test body", "schedule": schedule, "device_token": "eRCZR9c5w5n69pl5mSUwTL:APA91bFkZVs6ZXCUchonXYJ6LQIkpjg2tHqZhJij-1rO_rQLdHlR5NErXZErlqjhjZceAZxiuD2bDo9viV7nZHxDcRx7tYi7efQ3W_nHe_j8OB57cyhEvNp44TVLFqIZJqJo-hsJn-Js"})
   res.send(req.body);
 })
 

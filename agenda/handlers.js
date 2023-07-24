@@ -2,6 +2,7 @@ import { send } from '../firebase/firebase.js';
 
 const JobHandlers = {
   sendMessage: async (job, done) => {
+    console.log("sending message")
     const { data } = job.attrs;
     const message = {
       data: {

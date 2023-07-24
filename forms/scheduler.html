@@ -12,16 +12,36 @@
   <header> Scheduler </header><br>
   <div class="scheduler-container">
     <script>
-      function repeatSelectOnChange(val){
+      function repeatIntervalOnChange(val){
         switch(val){
           case "month":
-            document.getElementById("repeat-push-subform").innerHTML = "MONTH"
+            document.getElementById("repeat-push-subform").innerHTML = 
+              '<input name=\"second\" placeholder=\"second\" type=\"number\" id=\"second\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Second should be between 0 and 59.\')\">\
+              <input name=\"minute\" placeholder=\"minute\" type=\"number\" id=\"minute\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Minute should be between 0 and 59.\')\">\
+              <input name=\"hour\" placeholder=\"hour\" type=\"number\" id=\"hour\" min=\"0\" max=\"23\" oninvalid = \"setCustomValidity(\'Hour should be between 0 and 23.\')\">\
+              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\"><br/>'
             break;
           case "week":
-            document.getElementById("repeat-push-subform").innerHTML = "WEEK"
+            document.getElementById("repeat-push-subform").innerHTML = 
+              '<input name=\"second\" placeholder=\"second\" type=\"number\" id=\"second\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Second should be between 0 and 59.\')\">\
+              <input name=\"minute\" placeholder=\"minute\" type=\"number\" id=\"minute\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Minute should be between 0 and 59.\')\">\
+              <input name=\"hour\" placeholder=\"hour\" type=\"number\" id=\"hour\" min=\"0\" max=\"23\" oninvalid = \"setCustomValidity(\'Hour should be between 0 and 23.\')\">\
+              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\"><br/>'
             break;
           case "day":
-            document.getElementById("repeat-push-subform").innerHTML = "DAY"
+            document.getElementById("repeat-push-subform").innerHTML = 
+              '<input name=\"second\" placeholder=\"second\" type=\"number\" id=\"second\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Second should be between 0 and 59.\')\">\
+              <input name=\"minute\" placeholder=\"minute\" type=\"number\" id=\"minute\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Minute should be between 0 and 59.\')\">\
+              <input name=\"hour\" placeholder=\"hour\" type=\"number\" id=\"hour\" min=\"0\" max=\"23\" oninvalid = \"setCustomValidity(\'Hour should be between 0 and 23.\')\">\
+              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\"><br/>'
+            
+              // <label for=\"repeatDaySelectId\"> For </label>\
+              // <select id=\"repeatDaySelectId\" name=\"repeatDaySelect\">\
+              //   <option value=\"oneWeek\"> 1 week </option>\
+              //   <option value=\"twoWeeks\"> 2 week </option>\
+              //   <option value=\"threeWeeks\"> 3 week </option>\
+              //   <option value=\"fourWeeks\"> 4 week </option>\
+              // <select/>'
             break;
           case "hour": 
             document.getElementById("repeat-push-subform").innerHTML = "HOUR"
@@ -35,26 +55,33 @@
         if (repeatCheckboxBtn.checked){
           repeatCheckboxBtnLabel.innerHTML = "Repeats"
           document.getElementById('scheduler-form').innerHTML = 
-            '<label for=\"repeat_options\">Choose one:</label>\
-            <input type=\"hidden\" name=\"type\" value=\"repeat-push-form\" />\
-            <select id="\repeatSelectId\", name=\"repeatSelect\" onchange=\"repeatSelectOnChange(this.value)\" default>\
+            '<input type=\"hidden\" name=\"repeat\" value=\"true\" />\
+            <label for=\"repeat_options\">Choose one:</label><br/>\ Every\
+            <select id="\repeatIntervalId\", name=\"repeatInterval\" onchange=\"repeatIntervalOnChange(this.value)\" default>\
               <option value=\"month\"> month </option>\
               <option value=\"week\"> week </option>\
-              <option value=\"day\"> day </option>\
+              <option value=\"day\" selected> day </option>\
               <option value=\"hour\"> hour </option>\
-              <option value=\"minute\" selected> day </option>\
-            <select>\<br/>\
+              <option value=\"minute\"> minute </option>\
+            </select>\<br/>\
             <div id=\"repeat-push-subform\">\
               <input name=\"second\" placeholder=\"second\" type=\"number\" id=\"second\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Second should be between 0 and 59.\')\">\
               <input name=\"minute\" placeholder=\"minute\" type=\"number\" id=\"minute\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Minute should be between 0 and 59.\')\">\
               <input name=\"hour\" placeholder=\"hour\" type=\"number\" id=\"hour\" min=\"0\" max=\"23\" oninvalid = \"setCustomValidity(\'Hour should be between 0 and 23.\')\">\
-              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\">\
+              <input name=\"date\" placeholder=\"date\" type=\"date\" id=\"dateId\"><br/>\
             </div>\
             <input class=\"subscribe-button\" type=\"submit\" value=\"Subscribe\">'
+          // <label for=\"repeatDaySelectId\"> For </label>\
+              // <select id=\"repeatDaySelectId\" name=\"repeatDaySelect\">\
+              //   <option value=\"oneWeek\"> 1 week </option>\
+              //   <option value=\"twoWeeks\"> 2 week </option>\
+              //   <option value=\"threeWeeks\"> 3 week </option>\
+              //   <option value=\"fourWeeks\"> 4 week </option>\
+              // <select/>\
         }else{
           repeatCheckboxBtnLabel.innerHTML = "Does not repeat"
           document.getElementById('scheduler-form').innerHTML = 
-            '<input type=\"hidden\" name=\"type\" value=\"one-time-push-form\" />\
+            '<input type=\"hidden\" name=\"type\" value=\"one-time\" />\
               <input name=\"second\" placeholder=\"second\" type=\"number\" id=\"second\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Second should be between 0 and 59.\')\">\
               <input name=\"minute\" placeholder=\"minute\" type=\"number\" id=\"minute\" min=\"0\" max=\"59\" oninvalid = \"setCustomValidity(\'Minute should be between 0 and 59.\')\">\
               <input name=\"hour\" placeholder=\"hour\" type=\"number\" id=\"hour\" min=\"0\" max=\"23\" oninvalid = \"setCustomValidity(\'Hour should be between 0 and 23.\')\">\
@@ -67,7 +94,7 @@
     <input type="checkbox" id="repeatCheckboxBtn" onchange="repeatCheckboxLabelOnChange()">
     <label for="repeatCheckboxBtn" id="repeatCheckboxBtnLabel"> Does not repeat </label>
     <form method="POST" id="scheduler-form">
-      <input type="hidden" name="type" value="one-time-push-form" />
+      <input type="hidden" name="repeat" value="false" />
       <input name="second" placeholder="second" type="number" id="second" min="0" max="59" oninvalid = "setCustomValidity('Second should be between 0 and 59.')">
       <input name="minute" placeholder="minute" type="number" id="minute" min="0" max="59" oninvalid = "setCustomValidity('Minute should be between 0 and 59.')">
       <input name="hour" placeholder="hour" type="number" id="hour" min="0" max="23" oninvalid = "setCustomValidity('Hour should be between 0 and 23.')">
