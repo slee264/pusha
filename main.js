@@ -1,7 +1,6 @@
 import express from 'express';
 import fs from 'fs';
 import bodyParser from 'body-parser';
-// import schedule from 'node-schedule';
 import Busboy from 'busboy';
 
 import { __dirname } from './utils.js';
@@ -37,7 +36,6 @@ let agenda;
 app.use(express.static(__dirname))
 
 app.get("/", async (req, res) => {
-  // await definitions(agenda);
   res.send("Index")
 })
 

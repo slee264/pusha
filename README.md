@@ -13,7 +13,7 @@ In JASON format,
   "repeatInterval": ["1 day"/"2 days"/"3 days"/"1 minute"/"2 minutes"/...]
   
   ### The time at which you want your job to be executed in Javascript Date() format.
-  *Your time will be converted into UTC, so just write your local time.
+  * Your time will be converted into UTC, so just write your local time.
   
   "time": "2023-07-25T11:12:13.000Z"
   

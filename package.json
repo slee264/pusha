@@ -20,8 +20,7 @@
     "firebase-admin": "^11.10.1",
     "luxon": "^3.3.0",
     "moment-timezone": "^0.5.43",
-    "mongodb": "^5.7.0",
-    "node-schedule": "^2.1.1"
+    "mongodb": "^5.7.0"
   },
   "nodemonConfig": {
     "ext": "js,html"
