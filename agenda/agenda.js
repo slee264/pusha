@@ -23,13 +23,13 @@ async function setup_agenda(){
 
 async function definitions(agenda){
   await allDefinitions(agenda);
-  console.log({ jobs: agenda._definitions })
+  // console.log({ jobs: agenda._definitions })
 }
 
 async function scheduleJob(agenda, data){
   await agenda.start()
   console.log("agenda started before scheduling")
-  await schedule.sendMessage(agenda, data);
+  return await schedule.sendMessage(agenda, data);
 }
 
 export { setup_agenda, scheduleJob, definitions }

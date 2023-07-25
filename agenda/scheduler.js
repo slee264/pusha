@@ -5,28 +5,38 @@ const schedule = {
     const { title, body, device_token, schedule } = data;
     console.log("scheduling sendMessage:", schedule);
     const job = agenda.create('sendPushNotification');
-    const options = {
-      timezone: "Etc/UTC",
-      skipImmediate: true
+    const job_time = schedule.time.getHours() + ":" + schedule.time.getMinutes();
+    const job_date = schedule.time.getFullYear() + "-" + (schedule.time.getMonth()+1) + "-" + schedule.time.getDate();
+    switch(schedule.repeat){
+      case "true":
+
+        job.repeatEvery(schedule.repeatInterval);
+        job.repeatAt("at " + job_time)
+        job.schedule("at " + job_time)
+        
+        job.attrs.timezone = "Etc/UTC";
+        job.attrs.data = {title, body, device_token}
+        job.attrs.startDate = job_date;
+        break;
+        
+      default:
+        job.schedule(schedule.time)
+        job.attrs.timezone = "Etc/UTC";
+        job.attrs.data = {title, body, device_token}
+        break;
     }
-    job.repeatEvery("1 " + schedule.repeatInterval, options);
-    job.repeatAt("at " + schedule.time.getHours() + ":" + schedule.time.getMinutes())
-    job.schedule("at " + schedule.time.getHours() + ":" + schedule.time.getMinutes())
+
     console.log(job)
-    // job.repeatAt(schedule.time)
-    // switch(schedule.repeat) {
-    //   case "true":
-    //     const options = {
-    //       startDate: schedule.time,
-    //       timezone: 'Etc/UTC',
-    //       skipImmediate: true
-    //     }
-    //     await agenda.every("1 " + schedule.repeatInterval, "sendPushNotification", {title, body, device_token}, options)
-    //     break;
-    //   case "false":
-    //     await agenda.schedule(schedule.time, "sendPushNotification", {title, body, device_token})
-    //     break;
-    // }
+    
+    try {
+      const result = await job.save();
+      console.log('Successfully saved job to collection: \n', job.attrs);
+      return job.attrs;
+    } catch (e) {
+      console.error('Error saving job to collection:', e);
+      return e;
+    }
+
   }
 }
 
