@@ -18,15 +18,16 @@ In JASON format,
   
   "time": "2023-07-25T11:12:13.000Z"
   
-  # Your push notification title and body
+  ### Your push notification title and body
   
   This will shortly be improved upon in its detail\
   "title": "test title"
   "body": "test body"
   
-  # A device token you want your push notification to be sent to
+  ### A device token you want your push notification to be sent to
   "device_token": "asd1ol2h4nk12j4n..."\
 
+  ##
   A wrong device token will not result in throwing an error.
   However, a wrong date format, wrong repeat/repeatInterval, and etc. will generate an HTML response with error information
   Keep your response._id(your job ID) for future uses.
