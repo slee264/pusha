@@ -4,3 +4,38 @@ import {fileURLToPath} from 'url';
 export const __filename = fileURLToPath(import.meta.url);
 
 export const __dirname = path.dirname(__filename);
+
+function validateDate(date, hour, minute){
+
+  if (date.toString() === "Invalid Date"){
+    return {valid: false, reason: "Invalid date"};
+    
+  }else if (hour < 0 || hour > 23){
+    return {valid: false, reason: "Invalid hour"};
+    
+  }else if (minute < 0 || minute > 59){
+    return {valid: false, reason: "Invalid minute"};
+  }
+  
+  const res_date = new Date(date);
+  res_date.setHours(hour);
+  res_date.setMinutes(minute);
+  return {valid: true, date: res_date}
+}
+
+function validateInterval(interval){
+  let intervals = ["minute", "hour", "day", "week", "month", "year"];
+  for (const iv of intervals){
+    if (interval.includes(iv)){
+      const words = interval.split(" ");
+      if (/\d/.test(words[0])){
+        return {valid: true, interval: words[0] + " " + iv}
+      }
+    }
+  }
+  
+  
+  return {valid: false, reason: "Invalid interval"}
+}
+
+export { validateDate, validateInterval }
