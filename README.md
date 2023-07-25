@@ -2,7 +2,7 @@ How to:
 
 In JASON format,
 
-{
+{\
   /* Whether you want your job to be repeated */
   "repeat": ["true"/"false"] 
   
@@ -27,5 +27,5 @@ In JASON format,
   A wrong device token will not result in throwing an error. 
   However, a wrong date format, wrong repeat/repeatInterval, and etc. will generate an HTML response with error information*/
   Keep your response._id(your job ID) for future uses.
-  */
+  */\
 }
