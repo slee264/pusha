@@ -1,6 +1,6 @@
 How to:
 
-In JASON format,
+In JSON format,
 ### {
   ### Whether you want your job to be repeated
   * If repeat !== "true", this will be ignored and default to "false".
