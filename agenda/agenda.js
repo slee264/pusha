@@ -5,6 +5,7 @@ import { schedule } from './scheduler.js'
 
 async function setup_agenda(){
   try{
+    console.log("Starting agenda...");
     let agenda = await new Agenda({
     db: { 
       address: process.env["MONGODB_URI_DEV"], 
@@ -14,6 +15,7 @@ async function setup_agenda(){
       processEvery: "1 minute",
       maxConcurrency: 20,
     });
+    console.log("Agenda started.");
     return agenda;
   }catch(err){
     console.log(err);
@@ -27,8 +29,9 @@ async function definitions(agenda){
 }
 
 async function scheduleJob(agenda, data){
-  await agenda.start()
-  console.log("agenda started before scheduling")
+  console.log("Firing up Agenda to schedule your job...")
+  await agenda.start();
+  console.log("Agenda fired up.");
   return await schedule.sendMessage(agenda, data);
 }
 

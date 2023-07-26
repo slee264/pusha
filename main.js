@@ -6,6 +6,7 @@ import Busboy from 'busboy';
 import { __dirname, validateDate, validateInterval } from './utils.js';
 import { firebase_setup } from './firebase/firebase.js';
 import { setup_agenda, definitions, scheduleJob } from './agenda/agenda.js'
+import { objectID } from './database/mongodb.js';
 
 const app = express();
 
@@ -26,9 +27,6 @@ let agenda;
       await definitions(agenda);
     }
   } catch(err){
-    if (err.errorInfo.code === 'app/invalid-credential'){
-      valid_credentials = false;
-    }
     console.log(err)
   }
 })()
@@ -39,6 +37,7 @@ app.get("/", async (req, res) => {
   res.send("What's up?")
 })
 
+// Schedule a job
 app.post("/", jsonParser, async (req, res) => {
   const { date, hour, minute, repeat, repeatInterval, device_token, message } = req.body;
   const date_time_local = new Date(date);
@@ -64,10 +63,56 @@ app.post("/", jsonParser, async (req, res) => {
     time: validDate.date
   }
   
-  
   const result = await scheduleJob(agenda, {message, "schedule": schedule, device_token})
-  res.send(message);
+  res.send(result);
+  return;
+  
 })
+
+// Query your job info using its _id
+// Useful for making sure your job has been correctly saved
+app.post("/queryJobInfo", jsonParser, async (req, res) => {
+  try{
+    const { _id } = req.body;
+    const objID = objectID(_id);
+    const jobs = await agenda.jobs({ _id: objID });
+    res.send(jobs[0].attrs);
+    return;
+  }catch(err){
+    res.send(err);
+    return;
+  }
+})
+
+// Query your job using its _id
+// Useful for modifying your job
+app.post("/queryJobObject", jsonParser, async (req, res) => {
+  try{
+    const { _id } = req.body;
+    const objID = objectID(_id);
+    const jobs = await agenda.jobs({ _id: objID });
+    res.send(jobs[0]);
+    return;
+  }catch(err){
+    res.send(err);
+    return;
+  }
+})
+// Save your modified job.
+// app.post("/saveJob", jsonParser, async (req, res) => {
+//   try{
+//     const modifiedJob = req.body.job;
+//     const objID = objectID(modifiedJob._id);
+//     var job = (await agenda.jobs({_id: objID}))[0];
+//     await agenda.disable({_id: objID});
+//     job.attrs = modifiedJob;
+//     const result = await job.save();
+//     await agenda.enable({_id: objID});
+//     res.send(result);
+//   }catch(err){
+//     console.log(err);
+//   }
+// })
 
 app.listen(3000, () => {
   console.log("Application listening on port 3000")

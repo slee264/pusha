@@ -4,32 +4,25 @@ import { getMessaging } from 'firebase-admin/messaging';
 import 'dotenv/config';
 
 async function firebase_setup(){
+  console.log("Setting up Firebase...");
   const firebase_app = initializeApp({
       credential: admin.credential.cert(JSON.parse(process.env['GOOGLE_APPLICATION_CREDENTIAL']))
   });
+  console.log("Firebase started.");
 
   return firebase_app;
 }
 
-// const registrationToken = 'f89C1frvU7oq4OdEU8CJPG:APA91bEOBO_Ql55hAwTSVE4kpbbXx1aNL7vQzmrIs6HX__-Pal-LYKTl1W-gtXCzBww2CKaUFEd075cMid69Sc6cjKJCNq0v1buTRvhrk27PNRJd6jgGRyOqJAzyySAKnzLOvLW-qt_c';
-
-// const message = {
-//     data: {
-//         score: '850',
-//         time: '2:45'
-//     },
-//     token: registrationToken
-// };
-
 function send(message) {
-    getMessaging().send(message)
+  getMessaging().send(message)
     .then((response) => {
-        // Response is a message ID string.
-        console.log('Successfully sent message:', response);
+      // Response is a message ID string.
+      console.log('Successfully sent message:', response);
+      return response;
     })
-        .catch((error) => {
-        console.log('Error sending message:', error);
+    .catch((error) => {
+      console.log('Error sending message:', error);
     });
-}
+  }
 
 export { firebase_setup, send }

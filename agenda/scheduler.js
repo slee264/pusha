@@ -4,7 +4,7 @@ const schedule = {
   sendMessage: async (agenda, data) => {
     
     const { message, device_token, schedule } = data;
-    console.log("scheduling sendMessage:", schedule);
+    console.log("Saving job to collection ...");
     
     const job = agenda.create('sendPushNotification');
     const job_time = schedule.time.getHours() + ":" + schedule.time.getMinutes();
@@ -26,12 +26,10 @@ const schedule = {
     job.attrs.data = {message, device_token};
     job.attrs.repeatTimezone = "Etc/UTC";
 
-    console.log(job)
-    
     try {
-      // const result = await job.save();
-      console.log('Successfully saved job to collection: \n', job.attrs);
-      return job.attrs;
+      const result = await job.save();
+      console.log('Successfully saved job to collection: \n');
+      return { attrs: result.attrs };
     } catch (e) {
       console.error('Error saving job to collection:', e);
       return e;
