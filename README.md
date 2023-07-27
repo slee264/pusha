@@ -24,7 +24,7 @@
   "timezone": Your timezone (e.g. "America/New_York", "Asia/Bangkok", ...)\
   "date": In String format (e.g. "2023-07-25", "2024-02-20", ...)\
   "hour": In military time ("0" - "23")\
-  "minute": ("0" - "59")\
+  "minute": ("0" - "59")
   
   #### Your message(push notification title and body)
   * This will shortly be improved upon in its detail
@@ -32,7 +32,7 @@
   "message": {"title": "test title", "body": "test body"}
   
   #### A device token you want your push notification to be sent to
-  "device_token": "asd1ol2h4nk12j4n..."\
+  "device_token": "asd1ol2h4nk12j4n..."
 
   POST to "https://fbtest-uocfw.run.goorm.site/" with body including the above data.
   
@@ -49,21 +49,16 @@
   
   * You will be provided with an HTML response accordingly. Providing a wrong _id will not thorw an error.
 
-}
-
   Ex) {"_id": "abcde..."}
   
   POST to "https://fbtest-uocfw.run.goorm.site/queryJobInfo" with body including the above data.
 
 
 ### Cancel a job: in JSON format,
-{
   #### Your job id
   "_id": "abcde..."
   
   * You will be provided with an HTML response accordingly. Providing a wrong _id will not thorw an error.
-
-}
 
   Ex) {"_id": "abcde..."}
   
