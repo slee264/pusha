@@ -15,15 +15,21 @@ In JSON format,
   
   "repeatInterval": ["1 day"/"2 days"/"3 days"/"1 minute"/"2 minutes"/...]
   
-  ### The time at which you want your job to be executed in Javascript Date() format.
-  * Your time will be converted into UTC, so just write your local time.
+  ### The time at which you want your job to be FIRST executed in Javascript Date() format.
+  * Your time will be converted into UTC using the timezone you provide.
+  * The complete list of timezones can be found in "https://fbtest-uocfw.run.goorm.site/timezones".
+  * Try searching for your city first. If you don't get any result, try your region. Do not try your country. e.g. "Chicago", "America", "Africa", "Atlantic" ...
   * If your time is BEFORE the time at which you post your job, it will NOT be executed.
   * I recommend posting your job at least 5 minute before the time you want your job first executed.
-  "time": "2023-07-25T11:12:00.000Z"
   
-  Hour is in military time (0 - 23)
-  Minute (0 - 59)
+  "timezone": Your timezone (e.g. "America/New_York", "Asia/Bangkok", ...)
+  "date": In String format (e.g. "2023-07-25", "2024-02-20", ...)
+  "hour": In military time ("0" - "23")
+  "minute": ("0" - "59")
   Second will be ignored. (Every job is executed at hh:mm:00.)
+  
+  Ex) {repeat: "true", repeatInterval: "5 minutes", "date": "2022-07-25", "hour": "12", "minute": "34", ...}
+  Will be first executed On July 25th, 2022 at 12:13 and repeated every 5 minute from then on.
   
   ### Your message(push notification title and body)
   

@@ -1,19 +1,28 @@
 import path from 'path';
 import {fileURLToPath} from 'url';
+import moment from "moment-timezone";
 
 export const __filename = fileURLToPath(import.meta.url);
 
 export const __dirname = path.dirname(__filename);
 
+function validateTimezone(moment, timezone){
+  if(!moment.tz.zone(timezone)){
+    return {valid: false, reason: "Invalid timezone. To get a complete list of timezones, \"https://fbtest-uocfw.run.goorm.site/timezones\""}
+  }
+  
+  return {valid: true}
+}
+
 function validateDate(date, hour, minute){
 
-  if (date.toString() === "Invalid Date"){
+  if (!date || date.toString() === "Invalid Date"){
     return {valid: false, reason: "Invalid date"};
     
-  }else if (hour < 0 || hour > 23){
+  }else if (!hour || hour < 0 || hour > 23){
     return {valid: false, reason: "Invalid hour"};
     
-  }else if (minute < 0 || minute > 59){
+  }else if (!minute || minute < 0 || minute > 59){
     return {valid: false, reason: "Invalid minute"};
   }
   
@@ -38,4 +47,4 @@ function validateInterval(interval){
   return {valid: false, reason: "Invalid interval"}
 }
 
-export { validateDate, validateInterval }
+export { validateTimezone, validateDate, validateInterval }

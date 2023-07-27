@@ -24,10 +24,10 @@ const schedule = {
         break;
     }
     job.attrs.data = {message, device_token};
-    job.attrs.repeatTimezone = "Etc/UTC";
+    job.attrs.repeatTimezone = timezone;
 
     try {
-      const result = await job.save();
+      // const result = await job.save();
       console.log('Successfully saved job to collection: \n');
       return { attrs: result.attrs };
     } catch (e) {
