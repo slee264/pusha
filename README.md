@@ -1,4 +1,4 @@
-## Create a job: in JSON format,
+### Create a job: in JSON format,
 {
   #### Whether you want your job to be repeated
   * If repeat !== "true", this will be ignored and default to "false".
@@ -48,7 +48,7 @@
   * However, a wrong date format, wrong repeat/repeatInterval, and etc. will generate an HTML response with error information.
   * Keep your response._id(your job ID) for future uses.
   
-## Query a job: in JSON format,
+### Query a job: in JSON format,
 {
   #### Your job id
   "_id": "abcde..."
@@ -60,7 +60,7 @@
   POST to "https://fbtest-uocfw.run.goorm.site/queryJobInfo" with body including the above data.
 
 
-## Cancel a job: in JSON format,
+### Cancel a job: in JSON format,
 {
   #### Your job id
   "_id": "abcde..."
@@ -70,7 +70,7 @@
 }\
   POST to "https://fbtest-uocfw.run.goorm.site/cancelJob" with body including the above data.
 
-## Search for your timezone String:
+### Search for your timezone String:
   GET/enter in the address bar to "https://fbtest-uocfw.run.goorm.site/timezones/:region" where ":region" is replaced by your city/region. \
   Ex) "https://fbtest-uocfw.run.goorm.site/timezones/new_york"\
   
