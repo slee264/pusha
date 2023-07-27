@@ -15,10 +15,10 @@ In JSON format,
   
   "repeatInterval": ["1 day"/"2 days"/"3 days"/"1 minute"/"2 minutes"/...]
   
-  ### The time at which you want your job to be FIRST executed in Javascript Date() format.
-  * Your time will be converted into UTC using the timezone you provide.
+  ### The time at which you want your job to be executed in Javascript Date() format.
+  * Your job will be executed at the time you provide in the timezone you provide.
   * The complete list of timezones can be found in "https://fbtest-uocfw.run.goorm.site/timezones".
-  * Try searching for your city first. If you don't get any result, try your region. Do not try your country. e.g. "Chicago", "America", "Africa", "Atlantic" ...
+  * (Try searching for your city first. If you don't get any result, try your region. Do not try your country. e.g. "Chicago", "America", "Africa", "Atlantic" ...)
   * If your time is BEFORE the time at which you post your job, it will NOT be executed.
   * I recommend posting your job at least 5 minute before the time you want your job first executed.
   
