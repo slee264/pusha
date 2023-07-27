@@ -18,15 +18,16 @@ In JSON format,
   ### The time at which you want your job to be executed in Javascript Date() format.
   * Your job will be executed at the time you provide in the timezone you provide.
   * The complete list of timezones can be found in "https://fbtest-uocfw.run.goorm.site/timezones".
+  * (You can try searching for your city. ex) "https://fbtest-uocfw.run.goorm.site/timezones/chicago")
   * (Try searching for your city first. If you don't get any result, try your region. Do not try your country. e.g. "Chicago", "America", "Africa", "Atlantic" ...)
   * If your time is BEFORE the time at which you post your job, it will NOT be executed.
   * I recommend posting your job at least 5 minute before the time you want your job first executed.
   
-  "timezone": Your timezone (e.g. "America/New_York", "Asia/Bangkok", ...)
-  "date": In String format (e.g. "2023-07-25", "2024-02-20", ...)
-  "hour": In military time ("0" - "23")
-  "minute": ("0" - "59")
-  Second will be ignored. (Every job is executed at hh:mm:00.)
+  "timezone": Your timezone (e.g. "America/New_York", "Asia/Bangkok", ...)\
+  "date": In String format (e.g. "2023-07-25", "2024-02-20", ...)\
+  "hour": In military time ("0" - "23")\
+  "minute": ("0" - "59")\
+  Second will be ignored. (Every job is executed at hh:mm:00.)\
   
   Ex) {repeat: "true", repeatInterval: "5 minutes", "date": "2022-07-25", "hour": "12", "minute": "34", ...}
   Will be first executed On July 25th, 2022 at 12:13 and repeated every 5 minute from then on.

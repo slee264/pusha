@@ -75,19 +75,22 @@ app.post("/", jsonParser, async (req, res) => {
   
 })
 
-//Query list of timezones
+//Get all timezones
 app.get("/timezones", jsonParser, async (req, res) => {
-  const { region } = req.body;
+  res.send(moment.tz.names());
+})
+
+//Query list of timezones
+app.get("/timezones/:region", jsonParser, async (req, res) => {
+  const { region } = req.params;
   const tz_list = moment.tz.names();
   var result = [];
   if (region){
     for(const tz of tz_list){
-      if(tz.includes(region)){
+      if(tz.toLowerCase().includes(region.toLowerCase())){
         result.push(tz);
       }
     }
-  }else{
-    result = tz_list;
   }
   res.send(result);
 })
