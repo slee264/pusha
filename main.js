@@ -83,6 +83,7 @@ app.get("/timezones", jsonParser, async (req, res) => {
 //Query list of timezones
 app.get("/timezones/:region", jsonParser, async (req, res) => {
   const { region } = req.params;
+  console.log(region);
   const tz_list = moment.tz.names();
   var result = [];
   if (region){
@@ -140,7 +141,7 @@ app.post("/cancelJob", jsonParser, async (req, res) => {
     if (result > 0){
       res.send("Successfully removed job from collection");
     }else{
-      res.send("Looks like your job with _id doesn't exist in the database.");
+      res.send("Looks like your job with _id doesn't exist in the database. No worries!");
     }
   }catch(err){
     res.send(err);
