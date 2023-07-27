@@ -22,15 +22,16 @@ In JSON format,
   * (Try searching for your city first. If you don't get any result, try your region. Do not try your country. e.g. "Chicago", "America", "Africa", "Atlantic" ...)
   * If your time is BEFORE the time at which you post your job, it will NOT be executed.
   * I recommend posting your job at least 5 minute before the time you want your job first executed.
+  * Seconds will be ignored. (Every job is executed at hh:mm:00.)
   
   "timezone": Your timezone (e.g. "America/New_York", "Asia/Bangkok", ...)\
   "date": In String format (e.g. "2023-07-25", "2024-02-20", ...)\
   "hour": In military time ("0" - "23")\
   "minute": ("0" - "59")\
-  Second will be ignored. (Every job is executed at hh:mm:00.)\
+
   
-  Ex) {repeat: "true", repeatInterval: "5 minutes", "date": "2022-07-25", "hour": "12", "minute": "34", ...}
-  Will be first executed On July 25th, 2022 at 12:13 and repeated every 5 minute from then on.
+  Ex) {"repeat": "true", "repeatInterval": "5 minutes", "timezone": "America/New York", date": "2022-07-25", "hour": "12", "minute": "34", ...}
+  Will be first executed On July 25th, 2022 at 12:13 in ET and repeated every 5 minute from then on.
   
   ### Your message(push notification title and body)
   
@@ -42,7 +43,7 @@ In JSON format,
   "device_token": "asd1ol2h4nk12j4n..."
 
 ### }
-  POST to https://fbtest-uocfw.run.goorm.site/
+  POST to https://fbtest-uocfw.run.goorm.site/ with body including the above data.
   
   * A wrong device token will not result in throwing an error.
   * However, a wrong date format, wrong repeat/repeatInterval, and etc. will generate an HTML response with error information.
