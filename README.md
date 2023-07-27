@@ -40,8 +40,8 @@ In JSON format, \
   "message": {"title": "test title", "body": "test body"}
   
   ### A device token you want your push notification to be sent to
-  "device_token": "asd1ol2h4nk12j4n..."
-}
+  "device_token": "asd1ol2h4nk12j4n..."\
+  }
   POST to https://fbtest-uocfw.run.goorm.site/ with body including the above data.
   
   * A wrong device token will not result in throwing an error.
