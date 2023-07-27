@@ -40,7 +40,7 @@
   #### A device token you want your push notification to be sent to
 
   "device_token": "asd1ol2h4nk12j4n..."\
-  }\
+  }
 
   POST to "https://fbtest-uocfw.run.goorm.site/" with body including the above data.
   
@@ -56,7 +56,6 @@
   * You will be provided with an HTML response accordingly. Providing a wrong _id will not thorw an error.
 
 }\
-
   POST to "https://fbtest-uocfw.run.goorm.site/queryJobInfo" with body including the above data.
 
 
@@ -71,7 +70,7 @@
   POST to "https://fbtest-uocfw.run.goorm.site/cancelJob" with body including the above data.
 
 ### Search for your timezone String:
-  GET/enter in the address bar to "https://fbtest-uocfw.run.goorm.site/timezones/:region" where ":region" is replaced by your city/region. \
+  GET/enter in the address bar to "https://fbtest-uocfw.run.goorm.site/timezones/:region" where ":region" is replaced by your city/region. 
   Ex) "https://fbtest-uocfw.run.goorm.site/timezones/new_york"\
   
   "https://fbtest-uocfw.run.goorm.site/timezones/" will return a complete list of timezones.
