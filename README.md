@@ -67,6 +67,9 @@
 ### Search for your timezone String:
   GET (or enter in an address bar) to "https://fbtest-uocfw.run.goorm.site/timezones/:region" where ":region" is replaced by your city/region. 
   
-  Ex) https://fbtest-uocfw.run.goorm.site/timezones/new_york
+  Ex) "https://fbtest-uocfw.run.goorm.site/timezones/new_york"
   
   "https://fbtest-uocfw.run.goorm.site/timezones/" will return a complete list of timezones.
+
+### Modifiy your job:
+  Currently there is no way to modify an existing job. One way around is to cancel your job and then create a new one.

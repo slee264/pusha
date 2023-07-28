@@ -38,28 +38,23 @@ app.get("/", async (req, res) => {
   res.send("What's up?")
 })
 
-// Schedule a job
-app.post("/", jsonParser, async (req, res) => {
-  const { timezone, date, hour, minute, repeat, repeatInterval, device_token, message } = req.body;
+async function createJob(timezone, date, hour, minute, repeat, repeatInterval, device_token, message){
   
   const validTimezone = validateTimezone(moment, timezone);
   if (!validTimezone.valid){
-    res.send(validTimezone.reason);
-    return;
+    return validTimezone.reason;
   }
   
   const validDate = validateDate(date, hour, minute);
   
   if (!validDate.valid){
-    res.send(validDate.reason);
-    return;
+    return validDate.reason;
   }
   
   const validInterval = validateInterval(repeatInterval);
   
   if (!validInterval.valid){
-    res.send(validInterval.reason);
-    return;
+    return validInterval.reason;
   }
   
   const schedule = {
@@ -70,9 +65,15 @@ app.post("/", jsonParser, async (req, res) => {
   }
   
   const result = await scheduleJob(agenda, {message, "schedule": schedule, device_token})
-  res.send(result);
-  return;
+  return result;
+}
+
+// Schedule a job
+app.post("/", jsonParser, async (req, res) => {
+  const { timezone, date, hour, minute, repeat, repeatInterval, device_token, message } = req.body;
   
+  const result = await createJob(timezone, date, hour, minute, repeat, repeatInterval, device_token, message);
+  res.send(result);
 })
 
 //Get all timezones
@@ -147,22 +148,6 @@ app.post("/cancelJob", jsonParser, async (req, res) => {
     return;
   }
 })
-
-// Save your modified job.
-// app.post("/saveJob", jsonParser, async (req, res) => {
-//   try{
-//     const modifiedJob = req.body.job;
-//     const objID = objectID(modifiedJob._id);
-//     var job = (await agenda.jobs({_id: objID}))[0];
-//     await agenda.disable({_id: objID});
-//     job.attrs = modifiedJob;
-//     const result = await job.save();
-//     await agenda.enable({_id: objID});
-//     res.send(result);
-//   }catch(err){
-//     console.log(err);
-//   }
-// })
 
 app.listen(3000, () => {
   console.log("Application listening on port 3000")

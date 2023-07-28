@@ -45,7 +45,6 @@ function validateInterval(interval){
     }
   }
   
-  
   return {valid: false, reason: "Invalid interval. Needs to be in the format of \":number minute/hour/days/week/month/year\""}
 }
 

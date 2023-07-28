@@ -6,7 +6,7 @@ import 'dotenv/config';
 async function firebase_setup(){
   console.log("Setting up Firebase...");
   const firebase_app = initializeApp({
-      credential: admin.credential.cert(JSON.parse(process.env['GOOGLE_APPLICATION_CREDENTIAL']))
+      credential: admin.credential.cert(JSON.parse(process.env['GOOGLE_APPLICATION_CREDENTIAL_DEV']))
   });
   console.log("Firebase started.");
 
