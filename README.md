@@ -76,10 +76,10 @@
   Currently there is no way to modify an existing job. One way around this is to cancel your existing job and create a new one.\
   To make it as convenient for you as possible, I've streamlined the process to an extent.
   
-  Step 1. Query your job using the job id.\
-  Ex) "https://fbtest-uocfw.run.goorm.site/queryJob" with "{"_id": "asd1k2j31..."}. It will return a result in the same form as the one you used to post your job.
+  Step 1. Query your existing job with _id.\
+  Ex) "https://fbtest-uocfw.run.goorm.site/queryJob" with "{"_id": "abcdefg..."}. It will return a result in the same form as the one you used to post a new job.
 
   Step 2. You modify the result to your liking. Make sure you include your existing job id.\
-  Ex) {"_id": "1aqsdasd...", "timezone": ...}
+  Ex) {"_id": "abcdefg...", "timezone": ...}
   
   Step 3. Post to "https://fbtest-uocfw.run.goorm.site/modifyJob". It will delete your existing job and create a new one. It'll return a new job id.
