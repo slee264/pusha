@@ -12,27 +12,28 @@
   
   "repeatInterval": ["1 day"/"2 days"/"3 days"/"1 minute"/"2 minutes"/...]
   
-  #### The time at which you want your job to be executed in Javascript Date() format.
-  * Your job will be executed at the time you provide in the timezone you provide.
+  #### The time at which you want your job to be executed.
+  * Your job will be first executed on "startDate" at "hour":"minute" you provide in "timezone".
+  * (Look at example below)
   * The complete list of timezones can be found in "https://fbtest-uocfw.run.goorm.site/timezones".
   * (You can try searching for your city. ex) "https://fbtest-uocfw.run.goorm.site/timezones/chicago")
   * (Try searching for your city first. If you don't get any result, try your region. Do not try your country. e.g. "Chicago", "America", "Africa", "Atlantic" ...)
-  * If your time is BEFORE the time at which you post your job, it will NOT be executed.
-  * I recommend posting your job at least 5 minute before the time you want your job first executed.
   * Seconds will be ignored. (Every job is executed at hh:mm:00.)
+  * SPECIFY HOUR AND MINUTE. EX) IF YOU WANT YOUR JOB EXECUTED AT 11 PM, WRITE "23:00".
   
   "timezone": Your timezone (e.g. "America/New_York", "Asia/Bangkok", ...)\
-  "date": In String format (e.g. "2023-07-25", "2024-02-20", ...)\
+  "starDate": In String format (e.g. "2023-07-25", "2024-02-20", ...)\
   "hour": In military time ("0" - "23")\
   "minute": ("0" - "59")
+  
   
   #### Your message(push notification title and body)
   * This will shortly be improved upon in its detail
   
   "message": {"title": "test title", "body": "test body"}
   
-  #### A device token you want your push notification to be sent to
-  "device_token": "asd1ol2h4nk12j4n..."
+  #### Device token(s) you want your push notification to be sent to
+  "device_token": ["asd1ol2h4nk12j4n...", "asd1123vv...", ...]
 
   POST to "https://fbtest-uocfw.run.goorm.site/" with body including the above data.
   
@@ -72,4 +73,13 @@
   "https://fbtest-uocfw.run.goorm.site/timezones/" will return a complete list of timezones.
 
 ### Modifiy your job:
-  Currently there is no way to modify an existing job. One way around is to cancel your job and then create a new one.
+  Currently there is no way to modify an existing job. One way around is to cancel your job and then create a new one.\
+  To make it as convenient for you as possible, I've streamlined the process for you.
+  
+  Step 1. Query your job using the job id.\
+  Ex) "https://fbtest-uocfw.run.goorm.site/queryJob" with "{"_id": "asd1k2j31..."}. It will return a result in the same form as the one you used to post your job.
+
+  Step 2. You modify the result to your liking. Make sure you include your existing job id.\
+  Ex) {"_id": "1aqsdasd...", "timezone": ...}
+  
+  Step 3. Post to "https://fbtest-uocfw.run.goorm.site/modifyJob". It will delete your existing job and create a new one. It'll return a new job id.

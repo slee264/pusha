@@ -4,9 +4,9 @@ import bodyParser from 'body-parser';
 import Busboy from 'busboy';
 import moment from "moment-timezone";
 
-import { __dirname, validateTimezone, validateDate, validateInterval } from './utils.js';
+import { __dirname, validateTimezone, validateDate, validateInterval, validateJob, formalize } from './utils.js';
 import { firebase_setup } from './firebase/firebase.js';
-import { setup_agenda, definitions, scheduleJob } from './agenda/agenda.js'
+import { setup_agenda, definitions, scheduleSendMessage } from './agenda/agenda.js'
 import { objectID } from './database/mongodb.js';
 
 const app = express();
@@ -38,42 +38,21 @@ app.get("/", async (req, res) => {
   res.send("What's up?")
 })
 
-async function createJob(timezone, date, hour, minute, repeat, repeatInterval, device_token, message){
-  
-  const validTimezone = validateTimezone(moment, timezone);
-  if (!validTimezone.valid){
-    return validTimezone.reason;
-  }
-  
-  const validDate = validateDate(date, hour, minute);
-  
-  if (!validDate.valid){
-    return validDate.reason;
-  }
-  
-  const validInterval = validateInterval(repeatInterval);
-  
-  if (!validInterval.valid){
-    return validInterval.reason;
-  }
-  
-  const schedule = {
-    repeat: (repeat === "true")? repeat : "false",
-    repeatInterval: validInterval.interval,
-    time: validDate.date,
-    timezone: timezone
-  }
-  
-  const result = await scheduleJob(agenda, {message, "schedule": schedule, device_token})
-  return result;
-}
-
 // Schedule a job
 app.post("/", jsonParser, async (req, res) => {
-  const { timezone, date, hour, minute, repeat, repeatInterval, device_token, message } = req.body;
+  const { timezone, startDate, hour, minute, repeat, repeatInterval, device_token, message } = req.body;
   
-  const result = await createJob(timezone, date, hour, minute, repeat, repeatInterval, device_token, message);
+  const job = validateJob(timezone, startDate, hour, minute, repeat, repeatInterval);
+  
+  let result;
+  if (job.valid){
+    result = await scheduleSendMessage(agenda, {message, device_token, schedule: job.schedule })
+  }else{
+    result = job.reason;
+  }
+  
   res.send(result);
+  // res.send("hi")
 })
 
 //Get all timezones
@@ -96,30 +75,15 @@ app.get("/timezones/:region", jsonParser, async (req, res) => {
   res.send(result);
 })
 
-// Query your job info using its _id
-// Useful for making sure your job was correctly saved
-app.post("/queryJobInfo", jsonParser, async (req, res) => {
-  try{
-    const { _id } = req.body;
-    const objID = objectID(_id);
-    const jobs = await agenda.jobs({ _id: objID });
-    res.send(jobs[0].attrs);
-    return;
-  }catch(err){
-    res.send(err);
-    return;
-  }
-})
-
 // Query your job using its _id
 // Useful for modifying your job
-app.post("/queryJobObject", jsonParser, async (req, res) => {
+app.post("/queryJob", jsonParser, async (req, res) => {
   try{
     const { _id } = req.body;
     const objID = objectID(_id);
     const jobs = await agenda.jobs({ _id: objID });
     if(jobs[0]){
-      res.send(jobs[0]);
+      res.send(formalize(jobs[0]));
       return;
     }else{
       res.send("Oops, seems like your job doesn't exist!");
@@ -147,6 +111,24 @@ app.post("/cancelJob", jsonParser, async (req, res) => {
     res.send(err);
     return;
   }
+})
+
+app.post("/modifyJob", jsonParser, async(req, res) =>{
+  const { _id, timezone, startDate, hour, minute, repeat, repeatInterval, device_token, message } = req.body;
+  console.log(req.body);
+  const oldJobObjID = objectID(_id);
+  const newJob = validateJob(timezone, startDate, hour, minute, repeat, repeatInterval);
+
+  let result;
+  if (newJob.valid){
+    await agenda.cancel({ _id: oldJobObjID });
+    result = await scheduleSendMessage(agenda, {message, device_token, schedule: newJob.schedule })
+  }else{
+    result = newJob.reason;
+  }
+  
+  res.send(result);
+  // res.send("hi")
 })
 
 app.listen(3000, () => {

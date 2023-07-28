@@ -28,11 +28,11 @@ async function definitions(agenda){
   // console.log({ jobs: agenda._definitions })
 }
 
-async function scheduleJob(agenda, data){
+async function scheduleSendMessage(agenda, data){
   console.log("Firing up Agenda to schedule your job...")
   await agenda.start();
   console.log("Agenda fired up.");
   return await schedule.sendMessage(agenda, data);
 }
 
-export { setup_agenda, scheduleJob, definitions }
+export { setup_agenda, scheduleSendMessage, definitions }

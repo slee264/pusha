@@ -5,7 +5,7 @@ const schedule = {
     
     const { message, device_token, schedule } = data;
     console.log("Saving job to collection ...");
-    
+
     const job = agenda.create('sendPushNotification');
     const job_time = schedule.time.getHours() + ":" + schedule.time.getMinutes();
     const job_date = schedule.time.getFullYear() + "-" + (schedule.time.getMonth()+1) + "-" + schedule.time.getDate();
@@ -29,12 +29,11 @@ const schedule = {
     try {
       const result = await job.save();
       console.log('Successfully saved job to collection: \n');
-      return { attrs: result.attrs };
+      return { _id: result.attrs._id };
     } catch (e) {
       console.error('Error saving job to collection:', e);
       return e;
     }
-
   }
 }
 
