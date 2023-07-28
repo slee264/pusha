@@ -73,8 +73,8 @@
   "https://fbtest-uocfw.run.goorm.site/timezones/" will return a complete list of timezones.
 
 ### Modifiy your job:
-  Currently there is no way to modify an existing job. One way around is to cancel your job and then create a new one.\
-  To make it as convenient for you as possible, I've streamlined the process for you.
+  Currently there is no way to modify an existing job. One way around this is to cancel your existing job and create a new one.\
+  To make it as convenient for you as possible, I've streamlined the process to an extent.
   
   Step 1. Query your job using the job id.\
   Ex) "https://fbtest-uocfw.run.goorm.site/queryJob" with "{"_id": "asd1k2j31..."}. It will return a result in the same form as the one you used to post your job.
