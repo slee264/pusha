@@ -56,6 +56,25 @@ async function create_user(new_user){
   return result;
 }
 
+async function get_user(user){
+  let result = {success: false};
+  try{
+    const {username, password} = user;
+    const exists = await User.findOne({username});
+    if (exists){
+      result.success = true;
+      result.data = exists;
+    }else{
+      result.err = "Username doesn't exist."
+    }
+  }catch(err){
+    console.log(err);
+    result.err = err;
+  }
+  
+  return result;
+}
+
 async function create_event(user_info, event_name, push_notif_message ){
   try{
     const user = await User.findOne({ username: user_info.username });
@@ -92,4 +111,4 @@ function objectID(_id){
   }
 }
 
-export { mongo_setup, objectID, connect_mongoose, create_event, create_user }
+export { mongo_setup, objectID, connect_mongoose, create_event, create_user, get_user }
