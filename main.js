@@ -4,7 +4,7 @@ var jsonParser = bodyParser.json();
 
 import { __dirname } from './utils.js';
 import { pushRouter } from './push/pushRouter.js';
-import { userRouter } from './database/dbRouter.js';
+import { userRouter } from './database/userRouter.js';
 import { connect_mongoose, create_event, create_user, get_user } from './database/index.js';
 
 const app = express();

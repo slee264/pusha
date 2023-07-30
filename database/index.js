@@ -39,7 +39,7 @@ async function create_user(new_user){
     if(exists){
       result.err = "A user with the username already exists.";
     }else{
-      const user = new User({username, password, profile});
+      const user = new User({username, password, profile, joined: new Date()});
     
       const saved = await user.save();
 
@@ -73,6 +73,10 @@ async function get_user(user){
   }
   
   return result;
+}
+
+async function create_project(user, project_info){
+  
 }
 
 async function create_event(user_info, event_name, push_notif_message ){
