@@ -8,7 +8,7 @@ async function setup_agenda(){
     console.log("Starting agenda...");
     let agenda = await new Agenda({
     db: { 
-      address: process.env["MONGODB_URI_DEV"], 
+      address: process.env["MONGODB_AGENDA_URI_DEV"], 
       collection: "jobs", 
       options: { useUnifiedTopology: true }, 
       },

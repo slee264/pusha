@@ -16,7 +16,6 @@ function validateTimezone(timezone){
 
 function validateDate(date, hour, minute){
   const ymd = date.split("-");
-  console.log(ymd)
 
   if (!date || ymd[0].length != 4 || ymd[1].length > 2 || ymd[2].length > 2 || (new Date(date)).toString() === "Invalid Date"){
     return {valid: false, reason: "Invalid date. Needs to be in the format of \"yyyy:mm:dd\". Ex) \"2020-02-20\""};
@@ -49,7 +48,7 @@ function validateInterval(interval){
 }
 
 function validateJob(timezone, date, hour, minute, repeat, repeatInterval){
-  
+
   const validTimezone = validateTimezone(timezone);
   if (!validTimezone.valid){
     return validTimezone;

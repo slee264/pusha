@@ -19,7 +19,8 @@
     "express-fileupload": "^1.4.0",
     "firebase-admin": "^11.10.1",
     "moment-timezone": "^0.5.43",
-    "mongodb": "^5.7.0"
+    "mongodb": "^5.7.0",
+    "mongoose": "^7.4.1"
   },
   "nodemonConfig": {
     "ext": "js,html"

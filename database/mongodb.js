@@ -1,4 +1,5 @@
-import { MongoClient, ObjectId } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 import 'dotenv/config'
 
 function mongo_setup(){
@@ -10,6 +11,19 @@ function mongo_setup(){
   }
 }
 
+async function connect_mongoose(){
+  console.log("Connecting mongoose ...")
+  await mongoose.connect(process.env['MONGODB_URI_DEV'])
+  .then(() =>{
+    console.log('Mongoose connected.')
+  })
+  .catch(err => {
+    console.log(err);
+  });
+  return mongoose;
+}
+
+
 function objectID(_id){
   try{
     const objID = new ObjectId(_id);
@@ -19,4 +33,4 @@ function objectID(_id){
   }
 }
 
-export { mongo_setup, objectID }
+export { mongo_setup, objectID, connect_mongoose }
