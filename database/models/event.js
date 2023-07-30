@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const EventSchema = new Schema({
-  event_name: {type: String, required: true}, 
+  name: {type: String, required: true}, 
   push_notif_message:{
     title: {type: String, required: false},
     body: {type: String, required: false}
@@ -12,4 +12,6 @@ const EventSchema = new Schema({
   last_executed_at: {type: Date, required: false}
 })
 
-export { EventSchema }
+const Event = mongoose.model('Event', EventSchema);
+
+export { EventSchema, Event }

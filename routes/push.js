@@ -3,9 +3,9 @@ import bodyParser from 'body-parser';
 import moment from "moment-timezone";
 
 import { validateTimezone, validateDate, validateInterval, validateJob, formalize } from '../utils.js';
-import { firebase_setup } from '../firebase/firebase.js';
-import { setup_agenda, definitions, scheduleSendMessage } from '../agenda/agenda.js'
-import { objectID } from '../database/mongodb.js';
+import { firebase_setup } from '../push/firebase/firebase.js';
+import { setup_agenda, definitions, scheduleSendMessage } from '../push/agenda/agenda.js'
+import { objectID } from '../database/index.js';
 
 const pushRouter = express.Router();
 
