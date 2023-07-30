@@ -2,8 +2,8 @@ import { MongoClient, ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
 import 'dotenv/config'
 
-import { User } from './models/user.js';
-import { Event } from './models/event.js';
+import { User } from './models/userModel.js';
+import { Event } from './models/eventModel.js';
 
 function mongo_setup(){
   try{
@@ -31,13 +31,38 @@ async function connect_mongoose(){
   return result;
 }
 
+async function create_user(new_user){
+  let result = {success: false};
+  try{
+    const {username, password, profile} = new_user; 
+    const exists = await User.exists({ username });
+    if(exists){
+      result.err = "A user with the username already exists.";
+    }else{
+      const user = new User({username, password, profile});
+    
+      const saved = await user.save();
+
+      if(saved){
+        result.success = true;
+        result.data = saved;
+      }
+    }
+  }catch(err){
+    console.log(err);
+    result.err = err;
+  }
+  
+  return result;
+}
+
 async function create_event(user_info, event_name, push_notif_message ){
   try{
-    const user = await User.findOne({ username: user_info.username }).exec();
+    const user = await User.findOne({ username: user_info.username });
     
     if (user){
       user.trigger_events.forEach((event) => {
-        if(event.name == event_name){
+        if(event.event_name == event_name){
           return modify_event(user_info, event_name, push_notif_message)
         }
       })
@@ -67,4 +92,4 @@ function objectID(_id){
   }
 }
 
-export { mongo_setup, objectID, connect_mongoose, create_event }
+export { mongo_setup, objectID, connect_mongoose, create_event, create_user }

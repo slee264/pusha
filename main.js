@@ -4,13 +4,39 @@ var jsonParser = bodyParser.json();
 
 import { __dirname } from './utils.js';
 import { pushRouter } from './routes/push.js';
-import { connect_mongoose, create_event } from './database/index.js';
+import { connect_mongoose, create_event, create_user } from './database/index.js';
 
 const app = express();
 
 app.use(express.static(__dirname))
 
 app.use('/push', pushRouter);
+
+app.post("/signup", jsonParser, async (req, res) => {
+  let result = {success: false};
+  try{
+    await connect_mongoose();
+    const {username, password, profile} = req.body;
+    const new_user = {
+      username,
+      password,
+      profile
+    }
+    const user = await create_user(new_user);
+    
+    if(user.success){
+      result.success = true;
+      result.data = user;
+    }else{
+      result.err = user.err;
+    }
+  }catch(err){
+    console.log(err);
+    result.err = err;
+  }
+  
+  res.send(result);
+})
 
 app.post("/trigger", jsonParser, async (req, res) => {
   try{
