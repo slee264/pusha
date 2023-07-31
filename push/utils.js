@@ -4,7 +4,6 @@ function validateTimezone(timezone){
   if(!moment.tz.zone(timezone)){
     return {valid: false, reason: "Invalid timezone. Needs to be in the format of \"Region/City\". For example, \"America/Chicago\". To get a complete list of timezones, \"https://fbtest-uocfw.run.goorm.site/timezones\""}
   }
-  
   return {valid: true}
 }
 

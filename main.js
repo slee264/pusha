@@ -14,19 +14,19 @@ app.use(express.static(__dirname))
 app.use('/push', pushRouter);
 app.use('/user', userRouter)
 
-app.post("/trigger", jsonParser, async (req, res) => {
-  try{
-    const { user_info, event_name, push_notif_message } = req.body;
-    const result = await connect_mongoose();
-    if (result.connected){
-      await create_event(user_info, event_name, push_notif_message);
-    }
-  }catch(err){
-    console.log(err)
-  }
+// app.post("/trigger", jsonParser, async (req, res) => {
+//   try{
+//     const { user_info, event_name, push_notif_message } = req.body;
+//     const result = await connect_mongoose();
+//     if (result.connected){
+//       await create_event(user_info, event_name, push_notif_message);
+//     }
+//   }catch(err){
+//     console.log(err)
+//   }
   
-  res.send("hi")
-})
+//   res.send("hi")
+// })
 
 app.listen(3000, () => {
   console.log("Application listening on port 3000")

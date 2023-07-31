@@ -50,7 +50,7 @@ async function create_user(new_user){
     }
   }catch(err){
     console.log(err);
-    result.err = err;
+    result.err = err.message;
   }
   
   return result;
@@ -69,7 +69,7 @@ async function get_user(user){
     }
   }catch(err){
     console.log(err);
-    result.err = err;
+    result.err = err.message;
   }
   
   return result;
