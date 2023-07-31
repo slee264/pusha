@@ -4,6 +4,8 @@ import 'dotenv/config'
 
 import { User } from './models/userModel.js';
 import { Event } from './models/eventModel.js';
+import { Project } from './models/projectModel.js';
+import { objectID } from './utils.js';
 
 function mongo_setup(){
   try{
@@ -32,11 +34,25 @@ async function connect_mongoose(){
   return result;
 }
 
+async function disconnect_mongoose(){
+  console.log("Disonnecting mongoose ...")
+  let result = {connected: false}
+  await mongoose.disconnect()
+  .then(() =>{
+    console.log('Mongoose disconnected.')
+  })
+  .catch(err => {
+    console.log(err);
+    result.error = err;
+  });
+  
+  return result;
+}
+
 async function create_user(new_user){
   let result = {success: false};
   try{
-    const client = await connect_mongoose();
-    if(client.connected){
+    if(mongoose.connection.readyState == 1){
       const {username, password, profile} = new_user; 
       const exists = await User.exists({ username });
       if(exists){
@@ -51,6 +67,8 @@ async function create_user(new_user){
           result.user = saved;
         }
       }
+    }else if(mongoose.connection.readyState == 3 || mongoose.connection.readyState == 0){
+      result.err = "mongoose not connected"
     }
   }catch(err){
     console.log(err);
@@ -63,8 +81,7 @@ async function create_user(new_user){
 async function get_user(user){
   let result = {success: false};
   try{
-    const client = await connect_mongoose();
-    if(client.connected){
+    if(mongoose.connection.readyState == 1){
       const {username, password} = user;
       const exists = await User.findOne({username});
       if (exists){
@@ -73,6 +90,8 @@ async function get_user(user){
       }else{
         result.err = "Username doesn't exist."
       }
+    }else if(mongoose.connection.readyState == 3 || mongoose.connection.readyState == 0){
+      result.err = "mongoose not connected"
     }
   }catch(err){
     console.log(err);
@@ -82,44 +101,118 @@ async function get_user(user){
   return result;
 }
 
-async function create_project(user, project_info){
-  
-}
-
-async function create_event(user_info, event_name, push_notif_message ){
+async function update_user(user){
+  let result = {success: false};
   try{
-    const user = await User.findOne({ username: user_info.username });
-    
-    if (user){
-      user.trigger_events.forEach((event) => {
-        if(event.event_name == event_name){
-          return modify_event(user_info, event_name, push_notif_message)
+    if(mongoose.connection.readyState == 1){
+      const user = {
+        username: user.username,
+        password: user.password
+      }
+      await get_user(user)
+      .then(user => {
+        if(user.success){
+          //update user
         }
-      })
-      
-      const event = new Event({
-        name: event_name, 
-        push_notif_message,
-        created_at: new Date()
-      })
-      
-      user.trigger_events.push(event);
-      await user.save();
-
+    })}else if(mongoose.connection.readyState == 3 || mongoose.connection.readyState == 0){
+      result.err = "mongoose not connected"
     }
-
-  }catch(err){
-    console.log(err);
+  }catch(e){
+    console.log(e);
+    result.err = e.message;
   }
+  
+  return result;
 }
 
-function objectID(_id){
+async function create_project(user){
+  let result = {success: false};
   try{
-    const objID = new ObjectId(_id);
-    return objID;
-  }catch(err){
-    return err;
+    if(mongoose.connection.readyState == 1){
+      const { username, project_name } = user;
+      const found = await get_user({username});
+      if(found.success){
+        const new_project = new Project({username, project_name, created_at: new Date()});
+        found.user.projects.push(new_project);
+        const saved = await found.user.save();
+        if(saved){
+          result.success = true;
+          result.user = found.user;
+        }
+      }else{
+        result.err = "User not found"
+      }
+    }else if(mongoose.connection.readyState == 3 || mongoose.connection.readyState == 0){
+      result.err = "mongoose not connected"
+    }
+  }catch(e){
+    console.log(e);
+    result.err = e.message;
   }
+  return result;
 }
 
-export { mongo_setup, objectID, connect_mongoose, create_event, create_user, get_user }
+async function get_project(user){
+  let result = {success: false};
+  try{
+    if(mongoose.connection.readyState == 1){
+      const { username, password } = user;
+      const found = await get_user({username, password});
+
+      if(found.success){
+        result.success = true;
+        result.projects = found.user.projects;
+      }else{
+        result.err = found.err;
+      }
+    }else if(mongoose.connection.readyState == 3 || mongoose.connection.readyState == 0){
+      result.err = "mongoose not connected"
+    }
+  }catch(e){
+    console.log(e);
+    result.err = e.message;
+  }
+  
+  return result;
+}
+
+async function update_project(user, project_id){
+  let result = {success: false};
+  try{
+    
+  }catch(e){
+    console.log(e);
+    result.err = e;
+  }
+  
+  return result;
+}
+
+// async function create_event(user_info, event_name, push_notif_message ){
+//   try{
+//     const user = await User.findOne({ username: user_info.username });
+    
+//     if (user){
+//       user.trigger_events.forEach((event) => {
+//         if(event.event_name == event_name){
+//           return modify_event(user_info, event_name, push_notif_message)
+//         }
+//       })
+      
+//       const event = new Event({
+//         name: event_name, 
+//         push_notif_message,
+//         created_at: new Date()
+//       })
+      
+//       user.trigger_events.push(event);
+//       await user.save();
+
+//     }
+
+//   }catch(err){
+//     console.log(err);
+//   }
+// }
+
+export { mongo_setup, connect_mongoose, disconnect_mongoose, create_user, get_user, update_user, create_project, get_project }

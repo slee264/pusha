@@ -3,10 +3,8 @@ import 'dotenv/config'
 import moment from "moment-timezone";
 
 import { allDefinitions } from './definitions/index.js'
-import { validateTimezone, validateDate, validateInterval, validateJob, formalize } from '../utils.js';
+import { validateTimezone, validateDate, validateInterval, validateJob, formalize, objectID } from '../utils.js';
 import { schedule } from './scheduler.js';
-import { objectID } from '../../database/index.js';
-
 
 async function setup_agenda(){
   try{

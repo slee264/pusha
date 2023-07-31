@@ -2,10 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import moment from "moment-timezone";
 
-import { validateTimezone, validateDate, validateInterval, validateJob, formalize } from './utils.js';
-import { firebase_setup } from './firebase/firebase.js';
-import { setup_agenda, definitions, scheduleSendMessage, getAllTimezones, getTimezones, queryJob, cancelJob, modifyJob } from './agenda/agenda.js'
-import { objectID } from '../database/index.js';
+import { definitions, scheduleSendMessage, getAllTimezones, getTimezones, queryJob, cancelJob, modifyJob } from './agenda/agenda.js'
+import { agenda, fb_app } from '../main.js';
 
 const pushRouter = express.Router();
 
@@ -14,18 +12,6 @@ var jsonParser = bodyParser.json();
 
 // create application/x-www-form-urlencoded parser
 // var urlencodedParser = bodyParser.urlencoded({ extended: false });
-
-let fb_app;
-let agenda;
-
-(async () => {
-  try {
-    fb_app = await firebase_setup();
-    agenda = await setup_agenda();
-  } catch(err){
-    console.log(err)
-  }
-})()
 
 pushRouter.get("/", async (req, res) => {
   res.send("What's up?")

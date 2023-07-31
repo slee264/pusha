@@ -1,4 +1,5 @@
 import moment from "moment-timezone";
+import { ObjectId } from 'mongodb';
 
 function validateTimezone(timezone){
   if(!moment.tz.zone(timezone)){
@@ -90,4 +91,13 @@ function formalize(job){
   return formalized_attrs;
 }
 
-export { validateTimezone, validateDate, validateInterval, validateJob, formalize }
+function objectID(_id){
+  try{
+    const objID = new ObjectId(_id);
+    return objID;
+  }catch(err){
+    return err;
+  }
+}
+
+export { validateTimezone, validateDate, validateInterval, validateJob, formalize, objectID }
