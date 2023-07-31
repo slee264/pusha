@@ -26,6 +26,7 @@ async function connect_mongoose(){
   .catch(err => {
     console.log(err);
     result.error = err;
+    result.connected = false;
   });
   
   return result;
@@ -34,18 +35,21 @@ async function connect_mongoose(){
 async function create_user(new_user){
   let result = {success: false};
   try{
-    const {username, password, profile} = new_user; 
-    const exists = await User.exists({ username });
-    if(exists){
-      result.err = "A user with the username already exists.";
-    }else{
-      const user = new User({username, password, profile, joined: new Date()});
-    
-      const saved = await user.save();
+    const client = await connect_mongoose();
+    if(client.connected){
+      const {username, password, profile} = new_user; 
+      const exists = await User.exists({ username });
+      if(exists){
+        result.err = "A user with the username already exists.";
+      }else{
+        const user = new User({username, password, profile, joined: new Date()});
 
-      if(saved){
-        result.success = true;
-        result.data = saved;
+        const saved = await user.save();
+
+        if(saved){
+          result.success = true;
+          result.user = saved;
+        }
       }
     }
   }catch(err){
@@ -59,13 +63,16 @@ async function create_user(new_user){
 async function get_user(user){
   let result = {success: false};
   try{
-    const {username, password} = user;
-    const exists = await User.findOne({username});
-    if (exists){
-      result.success = true;
-      result.data = exists;
-    }else{
-      result.err = "Username doesn't exist."
+    const client = await connect_mongoose();
+    if(client.connected){
+      const {username, password} = user;
+      const exists = await User.findOne({username});
+      if (exists){
+        result.success = true;
+        result.user = exists;
+      }else{
+        result.err = "Username doesn't exist."
+      }
     }
   }catch(err){
     console.log(err);
