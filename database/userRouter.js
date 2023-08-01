@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import { connect_mongoose, create_user, get_user, update_user, create_project, get_project } from './index.js';
+import { connect_mongoose, create_user, get_user, update_user, create_project, get_all_projects, get_project } from './index.js';
 
 const userRouter = express.Router();
 var jsonParser = bodyParser.json();
@@ -22,8 +22,13 @@ userRouter.post("/project/create", jsonParser, async(req, res) => {
   res.send(await create_project(req.body));
 })
 
+userRouter.get("/project/getAll", jsonParser, async(req, res) => {
+  res.send(await get_all_projects(req.body));
+})
+
 userRouter.get("/project/get", jsonParser, async(req, res) => {
   res.send(await get_project(req.body));
 })
+
 
 export { userRouter }

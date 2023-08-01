@@ -132,15 +132,13 @@ async function create_project(user){
       const { username, project_name } = user;
       const found = await get_user({username});
       if(found.success){
-        const new_project = new Project({username, project_name, created_at: new Date()});
-        found.user.projects.push(new_project);
-        const saved = await found.user.save();
-        if(saved){
+        const saved = await found.user.add_project(project_name);
+        if(saved.success){
           result.success = true;
-          result.user = found.user;
+          result.project = saved.project;
         }
       }else{
-        result.err = "User not found"
+        result.err = found.err;
       }
     }else if(mongoose.connection.readyState == 3 || mongoose.connection.readyState == 0){
       result.err = "mongoose not connected"
@@ -152,7 +150,7 @@ async function create_project(user){
   return result;
 }
 
-async function get_project(user){
+async function get_all_projects(user){
   let result = {success: false};
   try{
     if(mongoose.connection.readyState == 1){
@@ -161,12 +159,53 @@ async function get_project(user){
 
       if(found.success){
         result.success = true;
-        result.projects = found.user.projects;
+        const found_projects = found.user.getAllProjects();
+        if(found_projects.success){
+          result.projects = found_projects.projects;
+        }else{
+          result.err = found_projects.err;
+        }
       }else{
         result.err = found.err;
       }
     }else if(mongoose.connection.readyState == 3 || mongoose.connection.readyState == 0){
       result.err = "mongoose not connected"
+    }
+  }catch(e){
+    console.log(e);
+    result.err = e.message;
+  }
+  
+  return result;
+}
+
+async function get_project(user, project){
+  let result = {success: false, project: null};
+  try{
+    const { username, password, project } = user;
+    const found = await get_user({username, password});
+    
+    if(found.success){
+      const { project_id, project_name } = project;
+      if(project_id){
+        let found_projects = found.user.getProjectById(project_id);
+        if(found_projects.success){
+          result.project = found_projects.projects;
+        }else{
+          result.err = found_projects.err;
+        }
+      }else if(project_name){
+        let found_projects = found.user.getProjectByName(project_name);
+        console.log(found_projects);
+        if(found_projects.success){
+          result.project = found_projects.projects;
+        }else{
+          result.err = found_projects.err;
+        }
+      }
+      result.success = true;
+    }else{
+        result.err = found.err;
     }
   }catch(e){
     console.log(e);
@@ -215,4 +254,4 @@ async function update_project(user, project_id){
 //   }
 // }
 
-export { mongo_setup, connect_mongoose, disconnect_mongoose, create_user, get_user, update_user, create_project, get_project }
+export { mongo_setup, connect_mongoose, disconnect_mongoose, create_user, get_user, update_user, create_project, get_all_projects, get_project }
