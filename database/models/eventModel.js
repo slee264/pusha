@@ -7,11 +7,14 @@ const EventSchema = new Schema({
   project_name: {type: String, required: true},
   event_name: {type: String, required: true},
   push_notif_message:{
-    _id: {type: String, required: true, unique: true},
-    title: {type: String, required: false},
-    body: {type: String, required: false}
+    type: { 
+      _id: {type: String},
+      title: {type: String},
+      body: {type: String}
+    },
+    required: false
   },
-  created_at: {type: Date, required: false},
+  created_at: {type: Date, required: true},
   last_executed_at: {type: Date, required: false}
 })
 
