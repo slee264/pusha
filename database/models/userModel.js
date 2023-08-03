@@ -10,7 +10,12 @@ const UserSchema = new Schema({
   profile: {
     name: {type: String, required: true}
   },
-  projects: {type: [Project.schema], required: false},
+  projects: {
+    type: [{
+      _id: {type: mongoose.ObjectId, required: true},
+      project_name: {type: String, required: true}
+    }], 
+    required: false},
   joined: {type: Date}
 }, { collection: 'user' })
 
@@ -34,8 +39,13 @@ UserSchema.static('create_user', async function (new_user){
     }
     // validate ***
     const user = new User({username, password, profile, joined: new Date()});
-    const saved = await user.save();
-    result = saved
+    let saved = await user.save();
+    if(saved){
+      result.success = true;
+      saved = saved.toObject();
+      delete saved.password;
+      result.user = saved;
+    }
   }catch(err){
     console.log(err);
     result.err = err.message;
@@ -60,9 +70,10 @@ UserSchema.static('get_user_obj', async function (user){
     if(exists){
       result.success = true;
       result.user = exists;
-    }else{
-      result.err = "User doesn't exist!"
+      break t;
     }
+    
+    result.err = "User doesn't exist!"
 
   }catch(err){
     console.log(err);
@@ -96,24 +107,31 @@ UserSchema.method('update_user', async function (user){
   
 })
 
+UserSchema.static('delete_user', async function (user){
+  
+})
+
 UserSchema.method('add_project', async function (project) {
-  let result = {success: false}
+  let result = {success: false};
   t: try{
     if(mongoose.connection.readyState != 1){
       result.err = "Mongoose not connected (or not done connecting)!"
       break t;
     }
-    const { project_name } = project;
-    if(!project_name){
-      result.err = "Invalid input."
-      break t;
-    }
-    const new_project = new Project({username: this.username, project_name, created_at: new Date()});
-    this.projects.push(new_project);
-    const saved = await this.save();
-    if(saved){
-      result.success = true;
-      result.project = saved;
+    const created = await Project.create_project({user: this, project});
+    if(created.success){
+      this.projects.push({
+        _id: created.project._id,
+        project_name: created.project.project_name
+      });
+      const saved = await this.save();
+      if(saved){
+        result = created;
+        break t;
+      }  
+      result.err = "User not saved!"
+    }else{
+      result = created;
     }
   }catch(e){
     console.log(e);
@@ -122,14 +140,18 @@ UserSchema.method('add_project', async function (project) {
   return result;
 })
 
-UserSchema.method('getAllProjects', function () {
+UserSchema.method('get_all_projects', async function () {
   let result = {success: false};
   t: try{
     if(mongoose.connection.readyState != 1){
       result.err = "Mongoose not connected (or not done connecting)!";
       break t;
     }
-    result.projects = this.projects;
+    let found = [];
+    for(const project of this.projects){
+      found.push((await Project.get_project_by_id(project._id)).project);
+    }
+    result.projects = found;
     result.success = true;
   }catch(e){
     console.log(e);
@@ -139,7 +161,7 @@ UserSchema.method('getAllProjects', function () {
   return result;
 })
 
-UserSchema.method('getProject', function (project) {
+UserSchema.method('get_project', async function (project) {
   let result = {success: false};
   t: try{
     if(mongoose.connection.readyState != 1){
@@ -147,33 +169,28 @@ UserSchema.method('getProject', function (project) {
       break t;
     }
     
-    if (!project.project_id && !project.project_name){
-      result.err = "Invalid input. Provide project={\"project_id\" / \"project_name\"}"
+    if (!project._id && !project.project_name){
+      result.err = 'Invalid input. Provide project={\"project_id\" / \"project_name\"}'
       break t;
     }
-    if(project.project_id){
-      // into ProjectModel ***
-      for(project in this.projects){
-        if (project_id == project._id.toString()){
-          result.projects = project;
-          break;
-        }
-      }
+    if(project._id){
+      result = await Project.get_project_by_id(project);
     }else if(project.project_name){
-      var projects = [];
-      this.projects.forEach((e) => {
-        if (e.project_name.includes(project.project_name)){
-          projects.push(e);
-        }
-      })
-      result.projects = projects;
+      result = await Project.get_project_by_name({username: this.username, project});
     }
-    result.success = true;
   }catch(e){
     console.log(e);
     result.err = e.message;
   }
   return result;
+})
+
+UserSchema.method('update_project', function() {
+  
+})
+
+UserSchema.method('delete_project', function() {
+  
 })
 
 const User = mongoose.model('User', UserSchema);

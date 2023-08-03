@@ -16,8 +16,8 @@ let agenda;
 
 (async () => {
   try {
-    fb_app = await firebase_setup();
-    agenda = await setup_agenda();
+    // fb_app = await firebase_setup();
+    // agenda = await setup_agenda();
     await connect_mongoose();
   } catch(err){
     console.log(err)

@@ -101,15 +101,15 @@ async function update_user(user){
 
 async function add_project(params){
   let result = {success: false};
-  try{
+  t: try{
     const {user, project} = params;
     const found = await User.get_user_obj(user);
-    if(found.success){
-      const saved = await found.user.add_project(project);
-      result = saved;
-    }else{
+    if(!found.success){
       result = found;
+      break t;
     }
+    const saved = await found.user.add_project(project);
+    result = saved;
   }catch(e){
     console.log(e);
     result.err = e.message;
@@ -119,14 +119,14 @@ async function add_project(params){
 
 async function get_all_projects(user){
   let result = {success: false};
-  try{
+  t: try{
     const found = await User.get_user_obj(user);
-    if(found.success){
-      const found_projects = found.user.getAllProjects();
-      result = found_projects;
-    }else{
+    if(!found.success){
       result = found;
+      break t;
     }
+    const found_projects = found.user.get_all_projects();
+    result = found_projects;
   }catch(e){
     console.log(e);
     result.err = e.message;
@@ -144,7 +144,7 @@ async function get_project(params){
       result = found;
       break t;
     }
-    let found_projects = found.user.getProject(project);
+    let found_projects = found.user.get_project(project);
     result = found_projects;
   }catch(e){
     console.log(e);
@@ -154,43 +154,42 @@ async function get_project(params){
   return result;
 }
 
-async function update_project(user, project_id){
-  let result = {success: false};
-  try{
-    //update
-  }catch(e){
-    console.log(e);
-    result.err = e;
-  }
+// async function update_project(user, project_id){
+//   let result = {success: false};
+//   try{
+//     //update
+//   }catch(e){
+//     console.log(e);
+//     result.err = e;
+//   }
   
+//   return result;
+// }
+
+async function add_event(params){
+  let result = {success: false};
+  t: try{
+    const {user, project, event} = params;
+    const user_found = await User.get_user_obj(user);
+    if(!user_found.success){
+      result = user_found;
+      break t;
+    }
+
+    const project_found = await user_found.user.get_project(project);
+    if(!project_found.success){
+      result = project_found;
+      break t;
+    }
+    result = project_found.projects.add_event(event);
+    
+  }catch(err){
+    console.log(err);
+    result.err = err.message;
+  }
+
   return result;
 }
 
-// async function create_event(user_info, event_name, push_notif_message ){
-//   try{
-//     const user = await User.findOne({ username: user_info.username });
-    
-//     if (user){
-//       user.trigger_events.forEach((event) => {
-//         if(event.event_name == event_name){
-//           return modify_event(user_info, event_name, push_notif_message)
-//         }
-//       })
-      
-//       const event = new Event({
-//         name: event_name, 
-//         push_notif_message,
-//         created_at: new Date()
-//       })
-      
-//       user.trigger_events.push(event);
-//       await user.save();
 
-//     }
-
-//   }catch(err){
-//     console.log(err);
-//   }
-// }
-
-export { mongo_setup, connect_mongoose, disconnect_mongoose, create_user, get_user, update_user, add_project, get_all_projects, get_project }
+export { mongo_setup, connect_mongoose, disconnect_mongoose, create_user, get_user, update_user, add_project, get_all_projects, get_project, add_event }
