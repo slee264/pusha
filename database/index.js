@@ -181,8 +181,8 @@ async function add_event(params){
       result = project_found;
       break t;
     }
-    result = project_found.projects.add_event(event);
-    
+
+    result = await project_found.project.add_event(event);
   }catch(err){
     console.log(err);
     result.err = err.message;

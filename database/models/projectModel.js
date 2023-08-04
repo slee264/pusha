@@ -98,9 +98,8 @@ ProjectSchema.method('add_event', async function (params) {
       result.err = "Mongoose not connected (or not done connecting)!"
       break t;
     }
-
-    const new_event = Event.create_event(params);
-    
+    const new_event = Event.create_event({project: this, event: params});
+    return new_event;
   }catch(e){
     console.log(e);
     result.err = e.message;
