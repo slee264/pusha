@@ -124,6 +124,7 @@ ProjectSchema.method('add_event', async function (params) {
 // })
 
 ProjectSchema.pre('delete', async function(next, project){
+
   const {events} = project;
   if(!events){
     next();

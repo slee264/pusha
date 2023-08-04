@@ -19,13 +19,25 @@ const UserSchema = new Schema({
   joined: {type: Date}
 }, { collection: 'user' })
 
+UserSchema.pre([
+  'create_user', 
+  'get_user_obj',
+  'get_user',
+  'update_user',
+  'add_project',
+  'get_all_project_objs',
+  'get_project_obj',
+  'update_project',
+  'delete_project'], function(next){
+    if(mongoose.connection.readyState != 1){
+        throw new Error("Mongoose not connected (or not done connecting)!");
+        next();
+      }
+    next();
+  })
 UserSchema.static('create_user', async function (new_user){
   let result = {success: false}
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!";
-      break t;
-    }
     
     const {username, password, profile} = new_user;
     if (!username || !password || !profile){
@@ -57,10 +69,6 @@ UserSchema.static('create_user', async function (new_user){
 UserSchema.static('get_user_obj', async function (user){
   let result = {success: false}
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!";
-      break t;
-    }
     const { username } = user;
     if(!username){
       result.err = "Invalid input."
@@ -86,10 +94,6 @@ UserSchema.static('get_user_obj', async function (user){
 UserSchema.static('get_user', async function (user){
   let result = {success: false}
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!";
-      break t;
-    }
     result = await User.get_user_obj(user);
     if(result.success){
       result.user = result.user.toObject();
@@ -114,10 +118,7 @@ UserSchema.static('delete_user', async function (user){
 UserSchema.method('add_project', async function (project) {
   let result = {success: false};
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!"
-      break t;
-    }
+
     const created = await Project.create_project({user: this, project});
     if(created.success){
       this.projects.push({
@@ -143,10 +144,6 @@ UserSchema.method('add_project', async function (project) {
 UserSchema.method('get_all_project_objs', async function () {
   let result = {success: false};
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!";
-      break t;
-    }
     let found = [];
     for(const project of this.projects){
       found.push((await Project.get_project_by_id(project._id)).project);
@@ -204,10 +201,6 @@ UserSchema.method('get_project_obj', async function (project) {
   let result = {success: false};
   t: try{
     const {_id, project_name} = project;
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!";
-      break t;
-    }
     
     if (!_id && !project_name){
       result.err = 'Invalid input. Provide project={\"project_id\" / \"project_name\"}'
