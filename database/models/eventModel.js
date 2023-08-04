@@ -20,10 +20,19 @@ const EventSchema = new Schema({
   last_executed_at: {type: Date, required: false}
 })
 
+EventSchema.pre('create_event', function(next, params){
+  const {project, event} = params;
+  if(!project || !event){
+    throw new Error('Invalid parameters!');
+  }
+  next();
+})
+
 EventSchema.static('create_event', async function(params){
   let result = {success: false}
   t: try{
     const {project, event} = params;
+
     const new_event = new Event({username: project.username, project: {project_name: project.project_name, _id: project._id}, event_name: event.event_name, created_at: new Date()})
     // console.log(new_event);
     const saved = await new_event.save();
@@ -41,6 +50,8 @@ EventSchema.static('create_event', async function(params){
   
   return result;
 })
+
+// EventSchema.static('get_event_by_id')
 
 EventSchema.method('update_event', async function(params){
   let result = {success: false}

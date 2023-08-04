@@ -125,7 +125,7 @@ async function get_all_projects(user){
       result = found;
       break t;
     }
-    const found_projects = found.user.get_all_projects();
+    const found_projects = found.user.get_all_project_objs();
     result = found_projects;
   }catch(e){
     console.log(e);
@@ -137,8 +137,8 @@ async function get_all_projects(user){
 
 async function get_project(params){
   let result = {success: false};
-  const {user, project} = params;
   t: try{
+    const {user, project} = params;
     const found = await User.get_user_obj(user);
     if(!found.success){
       result = found;
@@ -154,17 +154,27 @@ async function get_project(params){
   return result;
 }
 
-// async function update_project(user, project_id){
-//   let result = {success: false};
-//   try{
-//     //update
-//   }catch(e){
-//     console.log(e);
-//     result.err = e;
-//   }
-  
-//   return result;
-// }
+async function delete_project(params){
+  let result = {success: false};
+  t: try{
+    const {user, project} = params;
+    const found_user = await User.get_user_obj(user);
+    if(!found_user.success){
+      result = found_user;
+      break t;
+    }
+    const found_project = await found_user.user.get_project_obj(project);
+    if(!found_project.success){
+      result = found_project;
+      break t;
+    }
+    
+    result = await Project.delete(found_project.project);
+  }catch(err){
+    result.err = err.message;
+  }
+  return result;
+}
 
 async function add_event(params){
   let result = {success: false};
@@ -175,13 +185,11 @@ async function add_event(params){
       result = user_found;
       break t;
     }
-
-    const project_found = await user_found.user.get_project(project);
+    const project_found = await user_found.user.get_project_obj(project);
     if(!project_found.success){
       result = project_found;
       break t;
     }
-
     result = await project_found.project.add_event(event);
   }catch(err){
     console.log(err);
@@ -191,5 +199,4 @@ async function add_event(params){
   return result;
 }
 
-
-export { mongo_setup, connect_mongoose, disconnect_mongoose, create_user, get_user, update_user, add_project, get_all_projects, get_project, add_event }
+export { mongo_setup, connect_mongoose, disconnect_mongoose, create_user, get_user, update_user, add_project, get_all_projects, get_project, delete_project, add_event }

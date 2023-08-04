@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import { connect_mongoose, create_user, get_user, update_user, add_project, get_all_projects, get_project, add_event } from './index.js';
+import { connect_mongoose, create_user, get_user, update_user, add_project, delete_project, get_all_projects, get_project, add_event } from './index.js';
 
 const userRouter = express.Router();
 var jsonParser = bodyParser.json();
@@ -30,9 +30,12 @@ userRouter.get("/project/get", jsonParser, async(req, res) => {
   res.send(await get_project(req.body));
 })
 
+userRouter.post("/project/delete", jsonParser, async(req, res)=>{
+  res.send(await delete_project(req.body))
+})
+
 userRouter.post("/project/event/create", jsonParser, async(req, res)=>{
   res.send(await add_event(req.body))
 })
-
 
 export { userRouter }

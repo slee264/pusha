@@ -98,8 +98,20 @@ ProjectSchema.method('add_event', async function (params) {
       result.err = "Mongoose not connected (or not done connecting)!"
       break t;
     }
-    const new_event = Event.create_event({project: this, event: params});
-    return new_event;
+    const new_event = await Event.create_event({project: this, event: params});
+    
+    if(new_event){
+      this.events.push(new_event.event);
+      const saved = await this.save();
+      if(saved){
+        result.success = true;
+        result.event = new_event.event;
+      }
+      break t;
+    }
+    
+    result.err = "Project not saved";
+
   }catch(e){
     console.log(e);
     result.err = e.message;
@@ -110,6 +122,32 @@ ProjectSchema.method('add_event', async function (params) {
 // ProjectSchema.method('update_project', async function (user){
   
 // })
+
+ProjectSchema.pre('delete', async function(next, project){
+  const {events} = project;
+  if(!events){
+    next();
+  }
+  await project.events.forEach(async (event) => {
+    await Event.findByIdAndDelete(event._id);
+  })
+  next();
+})
+
+ProjectSchema.static('delete', async function(project){
+  let result = {success: false};
+  try{
+    const {_id} = project;
+    const removed = await Project.findByIdAndDelete(_id);
+    if(removed){
+      result.success = true;
+    }
+  }catch(err){
+    result.err = err.message;
+  }
+  
+  return result;
+})
 
 const Project = mongoose.model('Project', ProjectSchema);
 

@@ -140,7 +140,7 @@ UserSchema.method('add_project', async function (project) {
   return result;
 })
 
-UserSchema.method('get_all_projects', async function () {
+UserSchema.method('get_all_project_objs', async function () {
   let result = {success: false};
   t: try{
     if(mongoose.connection.readyState != 1){
@@ -161,23 +161,71 @@ UserSchema.method('get_all_projects', async function () {
   return result;
 })
 
-UserSchema.method('get_project', async function (project) {
+// UserSchema.method('get_project', function (project) {
+//   let result = {success: false};
+//   t: try{
+//     const {_id, project_name} = project;
+//     if(mongoose.connection.readyState != 1){
+//       result.err = "Mongoose not connected (or not done connecting)!";
+//       break t;
+//     }
+    
+//     if (!_id && !project_name){
+//       result.err = 'Invalid input. Provide project={\"project_id\" / \"project_name\"}'
+//       break t;
+//     }
+//     if(_id){
+//       for(const e of this.projects){
+//         if(e._id.toString() === _id){
+//           result.success = true;
+//           result.project = e;
+//           break t;
+//         }
+//       }
+//     }else if(project.project_name){
+//       for(const e of this.projects){
+//         if(e.project_name.includes(project.project_name)){
+//           result.success = true;
+//           result.project = e;
+//           break t;
+//         }
+//       }
+//     }
+    
+//     result.err = "Project not found"
+//   }catch(e){
+//     console.log(e);
+//     result.err = e.message;
+//   }
+//   return result;
+// })
+
+UserSchema.method('get_project_obj', async function (project) {
   let result = {success: false};
   t: try{
+    const {_id, project_name} = project;
     if(mongoose.connection.readyState != 1){
       result.err = "Mongoose not connected (or not done connecting)!";
       break t;
     }
     
-    if (!project._id && !project.project_name){
+    if (!_id && !project_name){
       result.err = 'Invalid input. Provide project={\"project_id\" / \"project_name\"}'
       break t;
     }
-    if(project._id){
-      result = await Project.get_project_by_id(project);
+    if(_id){
+      for(const e of this.projects){
+        if(e._id.toString() === _id){
+          result = await Project.get_project_by_id(e._id);
+          break t;
+        }
+      }
     }else if(project.project_name){
-      result = await Project.get_project_by_name({username: this.username, project});
+      result = await Project.get_project_by_name(project_name);
+      break t;
     }
+
+    result.err = "Project not found"
   }catch(e){
     console.log(e);
     result.err = e.message;
