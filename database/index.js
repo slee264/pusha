@@ -145,7 +145,7 @@ async function get_project(params){
       result = found;
       break t;
     }
-    let found_projects = found.user.get_project(project);
+    let found_projects = found.user.get_project_obj(project);
     result = found_projects;
   }catch(e){
     console.log(e);

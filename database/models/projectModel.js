@@ -28,7 +28,7 @@ ProjectSchema.static('create_project', async function (params) {
   let result = {success: false};
   t: try{
     const {user, project} = params;
-    if (!user || !project){
+    if (!user || !project || !project.project_name){
       result.err = "Invalid input";
       break t;
     }
@@ -52,7 +52,6 @@ ProjectSchema.static('create_project', async function (params) {
 ProjectSchema.static('get_project_by_id', async function(params) {
   let result = {success: false};
   t: try{
-
     const {_id} = params;
     const found = await Project.findById(_id);
     if(found){
