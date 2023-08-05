@@ -230,8 +230,27 @@ UserSchema.method('update_project', function() {
   
 })
 
-UserSchema.method('delete_project', function() {
+UserSchema.method('delete_project', async function(params) {
+  let result = {success: false}
+  t: try{
+    const {_id} = params;
+    if(!_id){
+      result.err = "Provide _id.";
+      break t;
+    }
+    
+    for(const project of this.projects){
+      if(project._id.toString() === _id){
+        result = await Project.delete(project);
+        break t;
+      }
+    }
+  }catch(err){
+    console.log(err);
+    result.err = err.message;
+  }
   
+  return result;
 })
 
 const User = mongoose.model('User', UserSchema);

@@ -6,12 +6,12 @@ import { allDefinitions } from './definitions/index.js'
 import { validateTimezone, validateDate, validateInterval, validateJob, formalize, objectID } from '../utils.js';
 import { schedule } from './scheduler.js';
 
-async function setup_agenda(){
+async function setup_agenda(environment){
   try{
     console.log("Starting agenda...");
     let agenda = await new Agenda({
     db: { 
-      address: process.env["MONGODB_AGENDA_URI_DEV"], 
+      address: environment === "development" ? process.env["MONGODB_AGENDA_URI_DEV"] : process.env["MONGODB_AGENDA_URI_PROD"], 
       collection: "jobs", 
       options: { useUnifiedTopology: true }, 
       },

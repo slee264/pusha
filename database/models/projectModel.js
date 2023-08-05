@@ -12,13 +12,21 @@ const ProjectSchema = new Schema({
   created_at: {type: Date}
 })
 
+ProjectSchema.pre(['create_project', 
+                   'get_project_by_id', 
+                   'get_project_by_name', 
+                   'add_event', 
+                   'delete'], function(next){
+  if(mongoose.connection.readyState != 1){
+    throw new Error("Mongoose not connected (or not done connecting)!");
+    next();
+  }
+  next();
+})
+
 ProjectSchema.static('create_project', async function (params) {
   let result = {success: false};
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!"
-      break t;
-    }
     const {user, project} = params;
     if (!user || !project){
       result.err = "Invalid input";
@@ -44,10 +52,7 @@ ProjectSchema.static('create_project', async function (params) {
 ProjectSchema.static('get_project_by_id', async function(params) {
   let result = {success: false};
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!"
-      break t;
-    }
+
     const {_id} = params;
     const found = await Project.findById(_id);
     if(found){
@@ -68,10 +73,7 @@ ProjectSchema.static('get_project_by_id', async function(params) {
 ProjectSchema.static('get_project_by_name', async function(params) {
   let result = {success: false};
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!"
-      break t;
-    }
+
     const {user, project} = params;
     const $regex = escapeStringRegexp(project.project_name);
     const found = await Project.find({
@@ -94,10 +96,7 @@ ProjectSchema.static('get_project_by_name', async function(params) {
 ProjectSchema.method('add_event', async function (params) {
   let result = {success: false}
   t: try{
-    if(mongoose.connection.readyState != 1){
-      result.err = "Mongoose not connected (or not done connecting)!"
-      break t;
-    }
+
     const new_event = await Event.create_event({project: this, event: params});
     
     if(new_event){
@@ -123,15 +122,14 @@ ProjectSchema.method('add_event', async function (params) {
   
 // })
 
-ProjectSchema.pre('delete', async function(next, project){
+ProjectSchema.pre('delete', async function(next, params){
 
-  const {events} = project;
-  if(!events){
-    next();
+  const {events} = params;
+  if(events){
+    await project.events.forEach(async (event) => {
+      await Event.findByIdAndDelete(event._id);
+    })
   }
-  await project.events.forEach(async (event) => {
-    await Event.findByIdAndDelete(event._id);
-  })
   next();
 })
 

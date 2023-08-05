@@ -5,7 +5,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "dev": "npm install && nodemon main.js"
   },
   "author": "",
@@ -25,5 +25,10 @@
   },
   "nodemonConfig": {
     "ext": "js,html"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "mocha": "^10.2.0",
+    "nodemon": "^3.0.1"
   }
 }

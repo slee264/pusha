@@ -20,6 +20,15 @@ const EventSchema = new Schema({
   last_executed_at: {type: Date, required: false}
 })
 
+EventSchema.pre(['create_event',
+                 'update_event'], function(next){
+  if(mongoose.connection.readyState != 1){
+    throw new Error("Mongoose not connected (or not done connecting)!");
+    next();
+  }
+  next();
+})
+
 EventSchema.pre('create_event', function(next, params){
   const {project, event} = params;
   if(!project || !event){

@@ -7,19 +7,20 @@ import { Event } from './models/eventModel.js';
 import { Project } from './models/projectModel.js';
 import { objectID } from './utils.js';
 
-function mongo_setup(){
+function mongo_setup(environment){
   try{
-    const client = new MongoClient(process.env['MONGODB_URI_DEV']);
+    const client = environemnt === 'development' ? new MongoClient(process.env['MONGODB_URI_DEV']) : new MongoClient(process.env['MONGODB_URI_PROD']);
     return client;
   }catch(err){
     console.log(err);
   }
 }
 
-async function connect_mongoose(){
+async function connect_mongoose(environment){
   console.log("Connecting mongoose ...")
   let result = {connected: false}
-  await mongoose.connect(process.env['MONGODB_URI_DEV'])
+  const env_var = environment === "development" ? 'MONGODB_URI_DEV' : 'MONGODB_URI_PROD';
+  await mongoose.connect(process.env[env_var])
   .then(() =>{
     console.log('Mongoose connected.')
     result.connected = true;
@@ -163,14 +164,9 @@ async function delete_project(params){
       result = found_user;
       break t;
     }
-    const found_project = await found_user.user.get_project_obj(project);
-    if(!found_project.success){
-      result = found_project;
-      break t;
-    }
-    
-    result = await Project.delete(found_project.project);
+    result = found_user.user.delete_project(project);
   }catch(err){
+    console.log(err);
     result.err = err.message;
   }
   return result;
