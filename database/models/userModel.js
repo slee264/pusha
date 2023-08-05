@@ -208,7 +208,7 @@ UserSchema.method('get_project_obj', async function (project) {
     }
     if(_id){
       for(const e of this.projects){
-        if(e._id.toString() === _id){
+        if(e._id.toString() === _id || e._id.toString() === _id.toString()){
           result = await Project.get_project_by_id(project);
           break t;
         }

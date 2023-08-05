@@ -53,6 +53,10 @@ ProjectSchema.static('get_project_by_id', async function(params) {
   let result = {success: false};
   t: try{
     const {_id} = params;
+    if(!_id || ((typeof(_id) === "string" && _id.length != 24))){
+      result.err = "Invalid input";
+      break t;
+    }
     const found = await Project.findById(_id);
     if(found){
       result.success = true;
@@ -74,6 +78,11 @@ ProjectSchema.static('get_project_by_name', async function(params) {
   t: try{
 
     const {user, project} = params;
+    
+    if(!project.project_name){
+      result.err = "Invalid input";
+      break t;
+    }
     const $regex = escapeStringRegexp(project.project_name);
     const found = await Project.find({
       username: user.username,

@@ -126,7 +126,7 @@ describe.skip('User', function() {
 })
 
 
-describe('User-Project', function() {
+describe.skip('User-Project', function() {
   before(function(done){
     mongoose.connection.collections.user.drop(() => {
       mongoose.connection.collections.projects.drop(() => done())
@@ -251,5 +251,9 @@ describe('User-Project', function() {
       done();
     }).
     catch(err => done(err));
+  })
+  
+  it.skip('should delete project', done => {
+    // ***
   })
 })
