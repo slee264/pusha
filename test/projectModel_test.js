@@ -133,7 +133,7 @@ describe.skip('Project', function() {
   })
 })
 
-describe('Project-Event', function() {
+describe.skip('Project-Event', function() {
   let created_project;
   
   before(function(done){

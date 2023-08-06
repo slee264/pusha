@@ -4,6 +4,7 @@ import 'dotenv/config';
   
 // tells mongoose to use ES6 implementation of promises
 mongoose.Promise = global.Promise;
+
 before(function(done){
   connect_mongoose("development").then(() => {
     done();

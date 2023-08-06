@@ -28,15 +28,7 @@ EventSchema.pre(['create_event',
   }
 })
 
-EventSchema.pre('create_event', function(next, params){
-  const {project, event} = params;
-  if(!project || !event || !event.event_name){
-    next(new Error("Invalid parameters!"));
-  }
-  next();
-})
-
-EventSchema.static('create_event', async function(params){
+EventSchema.static('create_event', async function(params, err){
   let result = {success: false}
   t: try{
     const {project, event} = params;
@@ -61,18 +53,14 @@ EventSchema.static('create_event', async function(params){
   return result;
 })
 
-EventSchema.pre('get_event_obj', function(next, params){
-  const {event} = params;
-  if(!event || !event._id || ((typeof(event._id) === "string" && _id.length != 24))){
-    throw new Error('Invalid parameters!');
-  }
-  next();
-})
-
 EventSchema.static('get_event_obj', async function(params){
   let result = {success: false}
   t: try{
     const {event} = params;
+    if(!event || !event._id || ((typeof(event._id) === "string" && _id.length != 24))){
+      result.err = 'Invalid parameters!';
+      break t;
+    }
     const found = await Event.findById(event._id);
     
     if(found){
@@ -89,8 +77,6 @@ EventSchema.static('get_event_obj', async function(params){
   
   return result;
 })
-
-// EventSchema.static('get_event_by_id')
 
 EventSchema.method('update_event', async function(params){
   let result = {success: false}

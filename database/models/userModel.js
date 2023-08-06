@@ -31,7 +31,6 @@ UserSchema.pre([
   'delete_project'], function(next){
     if(mongoose.connection.readyState != 1){
         throw new Error("Mongoose not connected (or not done connecting)!");
-        next();
       }
     next();
   })
