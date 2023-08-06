@@ -8,18 +8,22 @@ const { Schema } = mongoose;
 const ProjectSchema = new Schema({
   username: {type: String},
   project_name: {type: String, required: true},
-  events: {type: [Event.schema], required: false},
+  events: {type: [{
+    _id: {type: mongoose.ObjectId, required: true},
+    event_name: {type: String, required: true},
+    created_at: {type: Date, required: true}
+  }], required: false},
   created_at: {type: Date}
 })
 
 ProjectSchema.pre(['create_project', 
                    'get_project_by_id', 
                    'get_project_by_name', 
-                   'add_event', 
+                   'add_event',
+                   'get_event',
                    'delete'], function(next){
   if(mongoose.connection.readyState != 1){
     throw new Error("Mongoose not connected (or not done connecting)!");
-    next();
   }
   next();
 })
@@ -104,9 +108,7 @@ ProjectSchema.static('get_project_by_name', async function(params) {
 ProjectSchema.method('add_event', async function (params) {
   let result = {success: false}
   t: try{
-
-    const new_event = await Event.create_event({project: this, event: params});
-    
+    const new_event = await Event.create_event({project: this, ...params});
     if(new_event){
       this.events.push(new_event.event);
       const saved = await this.save();
@@ -126,6 +128,26 @@ ProjectSchema.method('add_event', async function (params) {
   return result;
 })
 
+ProjectSchema.method('get_event', async function(params){
+  let result = {success: false}
+  t: try{
+    const {event} = params;
+    for(const e of this.events){
+      if(e._id.toString() === event._id || e._id === event._id){
+        result = await Event.get_event_obj(params);
+        break t;
+      }
+    }
+    
+    result.err = "Event not found on this project";
+  }catch(err){
+    console.log(err);
+    result.err = err.message;
+  }
+  
+  return result;
+})
+
 // ProjectSchema.method('update_project', async function (user){
   
 // })
@@ -134,7 +156,7 @@ ProjectSchema.pre('delete', async function(next, params){
 
   const {events} = params;
   if(events){
-    await project.events.forEach(async (event) => {
+    await events.forEach(async (event) => {
       await Event.findByIdAndDelete(event._id);
     })
   }
@@ -143,12 +165,16 @@ ProjectSchema.pre('delete', async function(next, params){
 
 ProjectSchema.static('delete', async function(project){
   let result = {success: false};
-  try{
+  t: try{
     const {_id} = project;
     const removed = await Project.findByIdAndDelete(_id);
+    result.success = true;
     if(removed){
-      result.success = true;
+      result.deleted_project = removed;
+      break t;
     }
+    
+    result.removed = null;
   }catch(err){
     result.err = err.message;
   }

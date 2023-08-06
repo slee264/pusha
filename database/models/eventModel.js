@@ -21,18 +21,17 @@ const EventSchema = new Schema({
 })
 
 EventSchema.pre(['create_event',
-                 'update_event'], function(next){
+                 'get_event_obj',
+                 'update_event'], function(){
   if(mongoose.connection.readyState != 1){
     throw new Error("Mongoose not connected (or not done connecting)!");
-    next();
   }
-  next();
 })
 
 EventSchema.pre('create_event', function(next, params){
   const {project, event} = params;
-  if(!project || !event){
-    throw new Error('Invalid parameters!');
+  if(!project || !event || !event.event_name){
+    next(new Error("Invalid parameters!"));
   }
   next();
 })
@@ -41,20 +40,51 @@ EventSchema.static('create_event', async function(params){
   let result = {success: false}
   t: try{
     const {project, event} = params;
-
     const new_event = new Event({username: project.username, project: {project_name: project.project_name, _id: project._id}, event_name: event.event_name, created_at: new Date()})
-    // console.log(new_event);
     const saved = await new_event.save();
 
     if(saved){
       result.success = true;
-      result.event = saved;
+      result.event = {
+        _id: saved._id,
+        event_name: saved.event_name,
+        created_at: saved.created_at
+      };
       break t;
     }
     
     result.err = "Event not saved"
   }catch(err){
     result.err = err.message;
+  }
+  
+  return result;
+})
+
+EventSchema.pre('get_event_obj', function(next, params){
+  const {event} = params;
+  if(!event || !event._id || ((typeof(event._id) === "string" && _id.length != 24))){
+    throw new Error('Invalid parameters!');
+  }
+  next();
+})
+
+EventSchema.static('get_event_obj', async function(params){
+  let result = {success: false}
+  t: try{
+    const {event} = params;
+    const found = await Event.findById(event._id);
+    
+    if(found){
+      result.success = true;
+      result.event = found;
+      break t;
+    }
+    
+    result.err = "Event not found";
+  }catch(err){
+    result.err = err.message;
+    console.log(err);
   }
   
   return result;
