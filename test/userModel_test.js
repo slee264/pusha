@@ -3,7 +3,7 @@ import { User } from '../database/models/userModel.js';
 import assert from 'assert';
 import mongoose from 'mongoose';
 
-describe.skip('User', function() {
+describe('User', function() {
   before(function(done){
     mongoose.connection.collections.user.drop(() => done())
   })
@@ -126,7 +126,7 @@ describe.skip('User', function() {
 })
 
 
-describe.skip('User-Project', function() {
+describe('User-Project', function() {
   before(function(done){
     mongoose.connection.collections.user.drop(() => {
       mongoose.connection.collections.projects.drop(() => done())

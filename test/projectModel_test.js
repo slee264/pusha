@@ -5,7 +5,7 @@ import assert from 'assert';
 import mongoose from 'mongoose';
 
 
-describe.skip('Project', function() {
+describe('Project', function() {
   let created_project;
   before(function(done){
       mongoose.connection.collections.projects.drop(() => done())
@@ -133,7 +133,7 @@ describe.skip('Project', function() {
   })
 })
 
-describe.skip('Project-Event', function() {
+describe('Project-Event', function() {
   let created_project;
   
   before(function(done){
@@ -180,7 +180,7 @@ describe.skip('Project-Event', function() {
     }).then(res => {
       const {success, err} = res;
       assert.equal(success, false);
-      assert.equal(err.includes("Invalid"), true)
+      assert.equal(err.includes("event_name"), true)
       done();
     }).catch(err => done(err));
   })

@@ -47,7 +47,6 @@ describe('Event', function (){
     Event.create_event(event_params).then(res => {
       const {success, err} = res;
       assert.equal(success, false);
-      console.log(err);
       done();
     }).catch(err => done(err));
   })
@@ -67,7 +66,6 @@ describe('Event', function (){
     Event.create_event(event_params).then(res => {
       const {success, err} = res;
       assert.equal(success, false);
-      console.log(err);
       done();
     }).catch(err => done(err));
   })
@@ -87,6 +85,27 @@ describe('Event', function (){
   })
   
   it('should add a push notif message to an event', done => {
-    done();
+    created_event.create_message({
+      title: "test title",
+      body: "test body"
+    }).then(res => {
+      const {success, event} = res;
+      assert.equal(success, true);
+      assert.equal(event.push_notif_message.title, "test title")
+      assert.equal(event.push_notif_message.body, "test body")
+      done();
+    }).catch(err => done(err));
+  })
+  
+  it('should add a push notif message but should return error', done => {
+    created_event.create_message({
+      body: "test body"
+    }).then(res => {
+      const {success, event, err} = res;
+      assert.equal(success, false);
+      assert.equal(event, undefined);
+      assert.equal(err.includes("title"), true)
+      done();
+    }).catch(err => done(err));
   })
 })

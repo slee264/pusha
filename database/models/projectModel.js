@@ -109,21 +109,23 @@ ProjectSchema.method('add_event', async function (params) {
   let result = {success: false}
   t: try{
     const new_event = await Event.create_event({project: this, ...params});
-    if(new_event){
+    if(new_event.success){
       this.events.push(new_event.event);
       const saved = await this.save();
       if(saved){
         result.success = true;
         result.event = new_event.event;
+      }else{
+        result = new_event;
       }
       break t;
     }
     
-    result.err = "Project not saved";
+    result.err = new_event.err;
 
-  }catch(e){
-    console.log(e);
-    result.err = e.message;
+  }catch(err){
+    console.log(err);
+    result.err = err.message;
   }
   return result;
 })

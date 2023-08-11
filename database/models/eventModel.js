@@ -34,7 +34,6 @@ EventSchema.static('create_event', async function(params, err){
     const {project, event} = params;
     const new_event = new Event({username: project.username, project: {project_name: project.project_name, _id: project._id}, event_name: event.event_name, created_at: new Date()})
     const saved = await new_event.save();
-
     if(saved){
       result.success = true;
       result.event = {
@@ -47,6 +46,7 @@ EventSchema.static('create_event', async function(params, err){
     
     result.err = "Event not saved"
   }catch(err){
+    // console.log(err)
     result.err = err.message;
   }
   
@@ -87,6 +87,30 @@ EventSchema.method('update_event', async function(params){
   }
   
   return result;
+})
+
+EventSchema.method('create_message', async function(params){
+  let result = {success: false}
+  t: try{
+    const {title, body} = params;
+    if(!title || !body){
+      result.err = "Need to provide both title and body fields (even if they're empty)!";
+      break t;
+    }
+    this.push_notif_message = {title, body}
+    const saved = await this.save();
+    if(saved){
+      result.success = true;
+      result.event = this;
+      break t;
+    }
+    result.err = "Message not saved"
+  }catch(err){
+    result.err = err.message;
+    console.log(err)
+  }
+  
+  return result
 })
 
 const Event = mongoose.model('Event', EventSchema);
