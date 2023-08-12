@@ -119,9 +119,12 @@ ProjectSchema.method('add_event', async function (params) {
         result = new_event;
       }
       break t;
+    }else{
+      result.err = new_event.err;
+      break t;
     }
     
-    result.err = new_event.err;
+    result.err = "Event not added to the project!"
 
   }catch(err){
     console.log(err);

@@ -70,25 +70,28 @@ function validateJob(timezone, date, hour, minute, repeat, repeatInterval){
   return {valid: true, schedule};
 }
 
-function formalize(job){
+function streamline(job){
   const attrs = job.attrs;
-  var formalized_attrs = {
-    "_id": attrs._id,
-    "timezone": attrs.repeatTimezone, 
-    "startDate": attrs.startDate,
-    "hour": attrs.repeatAt.split(" ")[1].split(":")[0],
-    "minute": attrs.repeatAt.split(" ")[1].split(":")[1],
-  }
+  let streamlined_attrs = {};
+
+  streamlined_attrs._id = attrs._id;
+  streamlined_attrs.name = attrs.name;
+  streamlined_attrs.message = attrs.data.message;
+  streamlined_attrs.device_tokens = attrs.data.device_token;
+  streamlined_attrs.timezone = attrs.repeatTimezone;
   
   if(attrs.repeatInterval){
-    formalized_attrs.repeat = "true";
-    formalized_attrs.repeatInterval = attrs.repeatInterval;
+    streamlined_attrs.repeat = "true";
+    streamlined_attrs.repeatInterval = attrs.repeatInterval;
+    streamlined_attrs.startDate = attrs.startDate;
+    streamlined_attrs.repeatAt = attrs.repeatAt;
+  }else{
+    const date = new Date(attrs.nextRunAt)
+    streamlined_attrs.repeat = "false";
+    streamlined_attrs.runAt = attrs.nextRunAt.toISOString();
   }
   
-  formalized_attrs.message = attrs.data.message;
-  formalized_attrs.device_token = attrs.data.device_token;
-  
-  return formalized_attrs;
+  return streamlined_attrs;
 }
 
 function objectID(_id){
@@ -100,4 +103,4 @@ function objectID(_id){
   }
 }
 
-export { validateTimezone, validateDate, validateInterval, validateJob, formalize, objectID }
+export { validateTimezone, validateDate, validateInterval, validateJob, streamline, objectID }

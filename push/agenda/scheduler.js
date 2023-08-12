@@ -30,6 +30,7 @@ const schedule = {
       const saved = await job.save();
       console.log('Successfully saved job to collection: \n');
       result._id = saved.attrs._id;
+      result.agenda = saved.attrs;
       result.success = true;
     }catch (e) {
       console.error('Error saving job to collection:', e);

@@ -3,13 +3,15 @@ import 'dotenv/config'
 import moment from "moment-timezone";
 
 import { allDefinitions } from './definitions/index.js'
-import { validateTimezone, validateDate, validateInterval, validateJob, formalize, objectID } from '../utils.js';
+import { validateTimezone, validateDate, validateInterval, validateJob, streamline, objectID } from '../utils.js';
 import { schedule } from './scheduler.js';
+
+let agenda;
 
 async function setup_agenda(environment){
   try{
     console.log("Starting agenda...");
-    let agenda = await new Agenda({
+    agenda = await new Agenda({
     db: { 
       address: environment === "development" ? process.env["MONGODB_AGENDA_URI_DEV"] : process.env["MONGODB_AGENDA_URI_PROD"], 
       collection: "jobs", 
@@ -26,7 +28,21 @@ async function setup_agenda(environment){
   }catch(err){
     console.log(err);
   }
+}
+
+function shutdown_agenda(done){
+  try{
+    console.log("Shutting down Agenda...")
+    agenda.stop().then(() => {
+      console.log("Agenda shut down.")
+      done();
+      process.exit(0)
+    });
+  }catch(err){
+    console.log(err)
+  }
   
+  return 
 }
 
 async function definitions(agenda){
@@ -34,22 +50,23 @@ async function definitions(agenda){
   // console.log({ jobs: agenda._definitions })
 }
 
-async function scheduleSendMessage(agenda, data){
+async function scheduleSendMessage(schedule, message){
   let result = {success: false};
   try{
-    const { timezone, startDate, hour, minute, repeat, repeatInterval, device_token, message } = data;
+    const { timezone, startDate, hour, minute, repeat, repeatInterval, device_token} = schedule;
     const job = validateJob(timezone, startDate, hour, minute, repeat, repeatInterval);
     if (job.valid){
       console.log("Firing up Agenda to schedule your job...")
       await agenda.start();
       console.log("Agenda fired up.");
+      let { schedule } = await import('./scheduler.js')
       result = await schedule.sendMessage(agenda, {message, device_token, schedule: job.schedule});
     }else{
       result.err = job.reason;
     }
-  }catch(e){
-    console.log(err)
-    result.err = e.message;
+  }catch(err){
+    console.log(err);
+    result.err = err.message;
   }
   
   return result;
@@ -98,7 +115,7 @@ async function queryJob(agenda, req){
     const objID = objectID(_id);
     const jobs = await agenda.jobs({ _id: objID });
     if(jobs[0]){
-      result.data = formalize(jobs[0]);
+      result.data = streamline(jobs[0]);
     }else{
       result.data = null;
       result.message = "Oops, seems like your job doesn't exist!";
@@ -155,4 +172,4 @@ async function modifyJob(agenda, req){
   return result;
 }
 
-export { setup_agenda, scheduleSendMessage, definitions, getAllTimezones, getTimezones, queryJob, cancelJob, modifyJob }
+export { setup_agenda, shutdown_agenda, scheduleSendMessage, definitions, getAllTimezones, getTimezones, queryJob, cancelJob, modifyJob }

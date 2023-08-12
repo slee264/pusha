@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
-
 const { Schema } = mongoose;
+
+import 'dotenv/config'
+import { setup_agenda, scheduleSendMessage } from '../../push/agenda/agenda.js';
+import { streamline } from '../../push/utils.js';
 
 const EventSchema = new Schema({
   username: {type: String, required: true},
@@ -10,9 +13,28 @@ const EventSchema = new Schema({
   },
   event_name: {type: String, required: true},
   push_notif_message:{
+    _id: false,
     type: { 
-      title: {type: String},
-      body: {type: String}
+      message: {
+        _id: false,
+        type: {
+          title: {type: String}, 
+          body: {type: String}
+        }
+      },
+      schedule: {
+        _id: false,
+        type: {
+          repeat: {type: Boolean},
+          repeatInterval: {type: String},
+          timezone: {type: String},
+          startDate: {type: String},
+          repeatAt: {type: String},
+          runAt: {type: String}
+        },
+        required: false
+      },
+      device_tokens: {type: [String], _id: false,}
     },
     required: false
   },
@@ -92,12 +114,12 @@ EventSchema.method('update_event', async function(params){
 EventSchema.method('create_message', async function(params){
   let result = {success: false}
   t: try{
-    const {title, body} = params;
-    if(!title || !body){
+    const {message} = params;
+    if(!message.title || !message.body){
       result.err = "Need to provide both title and body fields (even if they're empty)!";
       break t;
     }
-    this.push_notif_message = {title, body}
+    this.push_notif_message = {message};
     const saved = await this.save();
     if(saved){
       result.success = true;
@@ -111,6 +133,34 @@ EventSchema.method('create_message', async function(params){
   }
   
   return result
+})
+
+EventSchema.method('set_message_schedule', async function(params){
+  let result = {success: false}
+  t: try{
+    const env = process.env["NODE_ENV"];
+    await setup_agenda(env);
+    const res = await scheduleSendMessage(params, this.push_notif_message.message);
+    let job = streamline({
+      attrs: res.agenda
+    })
+    delete job._id
+    this.push_notif_message.schedule = job;
+    this.push_notif_message.device_tokens = job.device_tokens;
+    this.push_notif_message.message = job.message;
+    const saved = await this.save();
+    if(saved){
+      result.event = saved;
+      break t;
+    }
+    
+    result.err = "Event not saved"
+  }catch(err){
+    console.log(err)
+    result.err = err.message
+  }
+  
+  return result;
 })
 
 const Event = mongoose.model('Event', EventSchema);

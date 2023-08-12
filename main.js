@@ -18,7 +18,7 @@ let agenda;
   try {
     const env = process.env["NODE_ENV"];
     // fb_app = await firebase_setup(env);
-    // agenda = await setup_agenda(env);
+    agenda = await setup_agenda(env);
     await connect_mongoose(env);
   } catch(err){
     console.log(err)

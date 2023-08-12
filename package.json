@@ -5,7 +5,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "mocha --timeout 5000",
+    "test": "mocha -b --timeout 5000",
     "dev": "npm install && nodemon main.js"
   },
   "author": "",
@@ -21,7 +21,8 @@
     "firebase-admin": "^11.10.1",
     "moment-timezone": "^0.5.43",
     "mongodb": "^5.7.0",
-    "mongoose": "^7.4.1"
+    "mongoose": "^7.4.1",
+    "why-is-node-running": "^2.2.2"
   },
   "nodemonConfig": {
     "ext": "js,html"

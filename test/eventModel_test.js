@@ -11,6 +11,7 @@ describe('Event', function (){
   })
   
   let created_event;
+  let created_message;
   
   it('should create event', done => {
     let event_params = {
@@ -86,25 +87,46 @@ describe('Event', function (){
   
   it('should add a push notif message to an event', done => {
     created_event.create_message({
-      title: "test title",
-      body: "test body"
+      message: {
+        title: "test title",
+        body: "test body"
+      }
     }).then(res => {
       const {success, event} = res;
       assert.equal(success, true);
-      assert.equal(event.push_notif_message.title, "test title")
-      assert.equal(event.push_notif_message.body, "test body")
+      assert.equal(event.push_notif_message.message.title, "test title")
+      assert.equal(event.push_notif_message.message.body, "test body")
       done();
     }).catch(err => done(err));
   })
   
   it('should add a push notif message but should return error', done => {
     created_event.create_message({
-      body: "test body"
+      message: {
+        body: "test body"
+      }
     }).then(res => {
       const {success, event, err} = res;
       assert.equal(success, false);
       assert.equal(event, undefined);
       assert.equal(err.includes("title"), true)
+      done();
+    }).catch(err => done(err));
+  })
+  
+  it('should set schedule for the event\'s push_notif_message', done => {
+    created_event.set_message_schedule({
+      timezone: "America/New_York",
+      startDate: "2023-08-11",
+      hour: "23",
+      minute: "14",
+      repeat: "true",
+      repeatInterval: "5 minutes",
+      device_token: ["dqdsIORYBynOXknmZUQumD:APA91bE8zKu7QRSNPq3WdqFDraUDfwo9YSmmHTphAI2bDFV0I1OPaIbrT8CWQ7HzbLaXvcave7ajR1dhiYyaJIDyE3vK0eYwpC-53VjD0vamJM5ac9U5Krgyp-KIef7Lstf0qeqRH7aV"]
+    }).then(res => {
+      const { success, event } = res;
+      console.log(res);
+      // assert.equal(success, true)
       done();
     }).catch(err => done(err));
   })

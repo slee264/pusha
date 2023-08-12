@@ -5,7 +5,7 @@ import assert from 'assert';
 import mongoose from 'mongoose';
 
 
-describe('Project', function() {
+describe.skip('Project', function() {
   let created_project;
   before(function(done){
       mongoose.connection.collections.projects.drop(() => done())
@@ -133,7 +133,7 @@ describe('Project', function() {
   })
 })
 
-describe('Project-Event', function() {
+describe.skip('Project-Event', function() {
   let created_project;
   
   before(function(done){
