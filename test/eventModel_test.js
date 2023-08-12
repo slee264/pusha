@@ -114,7 +114,7 @@ describe('Event', function (){
     }).catch(err => done(err));
   })
   
-  it('should set schedule for the event\'s push_notif_message', done => {
+  it('should set schedule for the event\'s push_notif_message that repeats', done => {
     created_event.set_message_schedule({
       timezone: "America/New_York",
       startDate: "2023-08-11",
@@ -125,8 +125,33 @@ describe('Event', function (){
       device_token: ["dqdsIORYBynOXknmZUQumD:APA91bE8zKu7QRSNPq3WdqFDraUDfwo9YSmmHTphAI2bDFV0I1OPaIbrT8CWQ7HzbLaXvcave7ajR1dhiYyaJIDyE3vK0eYwpC-53VjD0vamJM5ac9U5Krgyp-KIef7Lstf0qeqRH7aV"]
     }).then(res => {
       const { success, event } = res;
-      console.log(res);
-      // assert.equal(success, true)
+      assert.equal(success, true)
+      assert.equal(event.push_notif_message.schedule.repeat, true);
+      done();
+    }).catch(err => done(err));
+  })
+  
+  it.skip('should set schedule for the event\'s push_notif_message that does not repeat', done => {
+    created_event.set_message_schedule({
+      timezone: "America/New_York",
+      startDate: "2023-08-11",
+      hour: "23",
+      minute: "14",
+      repeat: "false",
+      repeatInterval: "5 minutes",
+      device_token: ["dqdsIORYBynOXknmZUQumD:APA91bE8zKu7QRSNPq3WdqFDraUDfwo9YSmmHTphAI2bDFV0I1OPaIbrT8CWQ7HzbLaXvcave7ajR1dhiYyaJIDyE3vK0eYwpC-53VjD0vamJM5ac9U5Krgyp-KIef7Lstf0qeqRH7aV"]
+    }).then(res => {
+      const { success, event } = res;
+      assert.equal(success, true)
+      assert.equal(event.push_notif_message.schedule.repeat, false);
+      done();
+    }).catch(err => done(err));
+  })
+  
+  it('should delete push notif message of the event', done => {
+    created_event.delete_push_notif().then(res => {
+      const {success} = res;
+      assert.equal(success, true)
       done();
     }).catch(err => done(err));
   })

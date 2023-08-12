@@ -162,7 +162,7 @@ ProjectSchema.pre('delete', async function(next, params){
   const {events} = params;
   if(events){
     await events.forEach(async (event) => {
-      await Event.findByIdAndDelete(event._id);
+      const found_event = await Event.findById(event._id);
     })
   }
   next();

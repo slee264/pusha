@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 import 'dotenv/config'
-import { setup_agenda, scheduleSendMessage } from '../../push/agenda/agenda.js';
+import { setup_agenda, scheduleSendMessage, cancelJob } from '../../push/agenda/agenda.js';
 import { streamline } from '../../push/utils.js';
 
 const EventSchema = new Schema({
@@ -13,7 +13,7 @@ const EventSchema = new Schema({
   },
   event_name: {type: String, required: true},
   push_notif_message:{
-    _id: false,
+    _id: {type: mongoose.ObjectId, auto: false, required: false},
     type: { 
       message: {
         _id: false,
@@ -68,7 +68,7 @@ EventSchema.static('create_event', async function(params, err){
     
     result.err = "Event not saved"
   }catch(err){
-    // console.log(err)
+    console.log(err.message)
     result.err = err.message;
   }
   
@@ -144,12 +144,13 @@ EventSchema.method('set_message_schedule', async function(params){
     let job = streamline({
       attrs: res.agenda
     })
-    delete job._id
     this.push_notif_message.schedule = job;
+    this.push_notif_message._id = job._id;
     this.push_notif_message.device_tokens = job.device_tokens;
     this.push_notif_message.message = job.message;
     const saved = await this.save();
     if(saved){
+      result.success = true
       result.event = saved;
       break t;
     }
@@ -158,6 +159,23 @@ EventSchema.method('set_message_schedule', async function(params){
   }catch(err){
     console.log(err)
     result.err = err.message
+  }
+  
+  return result;
+})
+
+EventSchema.method('delete_push_notif', async function(){
+  let result = {success: false}
+  t: try{
+    const deleted = await cancelJob(this.push_notif_message._id.toString())
+    console.log(deleted)
+    if(deleted.success){
+      result.success = true;
+      break t;
+    }
+  }catch(err){
+    console.log(err);
+    result.err = err.message;
   }
   
   return result;

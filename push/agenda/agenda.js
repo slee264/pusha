@@ -32,12 +32,16 @@ async function setup_agenda(environment){
 
 function shutdown_agenda(done){
   try{
-    console.log("Shutting down Agenda...")
-    agenda.stop().then(() => {
-      console.log("Agenda shut down.")
-      done();
-      process.exit(0)
-    });
+    if(agenda){
+      console.log("Shutting down Agenda...")
+      agenda.stop().then(() => {
+        console.log("Agenda shut down.")
+        done();
+        process.exit(0)
+      });
+    }else{
+      done()
+    }
   }catch(err){
     console.log(err)
   }
@@ -129,19 +133,19 @@ async function queryJob(agenda, req){
   return result;
 }
 
-async function cancelJob(agenda, req){
+async function cancelJob(req){
   let result = {success: false};
   try{
     const { _id } = req;
     const objID = objectID(_id);
     const cancelled = await agenda.cancel({ _id: objID });
+    console.log(cancelled)
     if (cancelled > 0){
+      result.success = true;
       result._id = _id;
-    }else{
-      result._id = null;
     }
-    result.success = true;
   }catch(e){
+    console.log(e)
     result.err = e.message;
   }
   
