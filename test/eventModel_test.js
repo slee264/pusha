@@ -148,7 +148,7 @@ describe('Event', function (){
     }).catch(err => done(err));
   })
   
-  it('should delete push notif message of the event', done => {
+  it('should delete push notif messages of the event', done => {
     created_event.delete_push_notif().then(res => {
       const {success} = res;
       assert.equal(success, true)

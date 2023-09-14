@@ -167,9 +167,13 @@ EventSchema.method('set_message_schedule', async function(params){
 EventSchema.method('delete_push_notif', async function(){
   let result = {success: false}
   t: try{
-    const deleted = await cancelJob(this.push_notif_message._id.toString())
+    const deleted = await cancelJob({
+      _id: this.push_notif_message._id.toString()
+    })
     console.log(deleted)
     if(deleted.success){
+      this.push_notif_message = undefined;
+      await this.save();
       result.success = true;
       break t;
     }
