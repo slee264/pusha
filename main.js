@@ -12,13 +12,13 @@ import { connect_mongoose, disconnect_mongoose } from './database/index.js';
 
 const app = express();
 let fb_app;
-let agenda;
+// let agenda;
 
 (async () => {
   try {
     const env = process.env["NODE_ENV"];
-    // fb_app = await firebase_setup(env);
-    agenda = await setup_agenda(env);
+    fb_app = await firebase_setup(env);
+    await setup_agenda(env);
     await connect_mongoose(env);
   } catch(err){
     console.log(err)
@@ -74,4 +74,4 @@ const server = app.listen(3000, () => {
   console.log("Application listening on port 3000")
 })
 
-export {fb_app, agenda}
+export {fb_app}

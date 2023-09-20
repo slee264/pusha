@@ -108,7 +108,7 @@ ProjectSchema.static('get_project_by_name', async function(params) {
 ProjectSchema.method('add_event', async function (params) {
   let result = {success: false}
   t: try{
-    const new_event = await Event.create_event({project: this, ...params});
+    const new_event = await Event.create_event({project: this, event: params});
     if(new_event.success){
       this.events.push(new_event.event);
       const saved = await this.save();

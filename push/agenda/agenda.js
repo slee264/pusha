@@ -54,20 +54,11 @@ async function definitions(agenda){
   // console.log({ jobs: agenda._definitions })
 }
 
-async function scheduleSendMessage(schedule, message){
+async function scheduleSendMessage(data){
   let result = {success: false};
   try{
-    const { timezone, startDate, hour, minute, repeat, repeatInterval, device_token} = schedule;
-    const job = validateJob(timezone, startDate, hour, minute, repeat, repeatInterval);
-    if (job.valid){
-      console.log("Firing up Agenda to schedule your job...")
-      await agenda.start();
-      console.log("Agenda fired up.");
-      let { schedule } = await import('./scheduler.js')
-      result = await schedule.sendMessage(agenda, {message, device_token, schedule: job.schedule});
-    }else{
-      result.err = job.reason;
-    }
+    let { schedule } = await import('./scheduler.js')
+    result = await schedule.sendMessage(data);
   }catch(err){
     console.log(err);
     result.err = err.message;
@@ -112,7 +103,7 @@ function getTimezones(params){
   return result;
 }
 
-async function queryJob(agenda, req){
+async function queryJob(req){
   let result = {success: false}
   try{
     const { _id } = req;
@@ -152,7 +143,7 @@ async function cancelJob(req){
   return result;
 }
 
-async function modifyJob(agenda, req){
+async function modifyJob(req){
   let result = {success: false};
   try{
     const { _id, timezone, startDate, hour, minute, repeat, repeatInterval, device_token, message } = req;
@@ -176,4 +167,4 @@ async function modifyJob(agenda, req){
   return result;
 }
 
-export { setup_agenda, shutdown_agenda, scheduleSendMessage, definitions, getAllTimezones, getTimezones, queryJob, cancelJob, modifyJob }
+export { agenda, setup_agenda, shutdown_agenda, scheduleSendMessage, definitions, getAllTimezones, getTimezones, queryJob, cancelJob, modifyJob }

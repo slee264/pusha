@@ -5,11 +5,10 @@ const JobHandlers = {
     console.log("sending message")
     
     const { data } = job.attrs;
-    
     const message = {
       data: {
-        "title": data.title,
-        "body": data.body
+        "title": data.message.title,
+        "body": data.message.body
       },
       token: data.device_token
     }

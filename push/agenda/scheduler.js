@@ -1,40 +1,30 @@
 import moment from 'moment-timezone';
+import { agenda } from './agenda.js';
 
 const schedule = {
-  sendMessage: async (agenda, data) => {
+  sendMessage: async (data) => {
     let result = {success: false}
     try {
-      const { message, device_token, schedule } = data;
-      console.log("Saving job to collection ...");
-
       const job = agenda.create('sendPushNotification');
-      const job_time = schedule.time.getHours() + ":" + schedule.time.getMinutes();
-      const job_date = schedule.time.getFullYear() + "-" + (schedule.time.getMonth()+1) + "-" + schedule.time.getDate();
-      switch(schedule.repeat){
-        case "true":
-
-          job.repeatEvery(schedule.repeatInterval);
-          job.repeatAt("at " + job_time)
-          job.schedule("at " + job_time)
-
-          job.attrs.startDate = job_date;
-          break;
-
-        default:
-          job.schedule(schedule.time)
-          break;
+      if (data.repeat){
+        if(data.repeatEvery){
+          job.repeatEvery(data.repeatEvery)
+        }
+        if(data.repeatAt){
+          job.repeatAt(data.repeatAt)
+        }
       }
-      job.attrs.data = {message, device_token};
-      job.attrs.repeatTimezone = schedule.timezone;
-
+      job.attrs.data = {message: data.message, device_token: data.device_token}
+      job.schedule(data.runAt)
+      console.log("Saving job to collection ...");
       const saved = await job.save();
       console.log('Successfully saved job to collection: \n');
       result._id = saved.attrs._id;
-      result.agenda = saved.attrs;
+      result.job = job;
       result.success = true;
     }catch (e) {
       console.error('Error saving job to collection:', e);
-      result.err = e;
+      result.error = e.message;
     }
     
     return result;

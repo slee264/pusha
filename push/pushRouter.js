@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import moment from "moment-timezone";
 
 import { definitions, scheduleSendMessage, getAllTimezones, getTimezones, queryJob, cancelJob, modifyJob } from './agenda/agenda.js'
-import { agenda, fb_app } from '../main.js';
+import {fb_app } from '../main.js';
 
 const pushRouter = express.Router();
 
@@ -19,7 +19,7 @@ pushRouter.get("/", async (req, res) => {
 
 // Schedule a job
 pushRouter.post("/", jsonParser, async (req, res) => {
-  res.send(await scheduleSendMessage(agenda, req.body));
+  res.send(await scheduleSendMessage(req.body));
 })
 
 //Get all timezones
@@ -35,16 +35,16 @@ pushRouter.get("/timezones/:region", jsonParser, async (req, res) => {
 // Query your job using its _id
 // Useful for modifying your job
 pushRouter.get("/queryJob", jsonParser, async (req, res) => {
-  res.send(await queryJob(agenda, req.body));
+  // res.send(await queryJob(agenda, req.body));
 })
 
 //Cancel and remove the job from database.
 pushRouter.post("/cancelJob", jsonParser, async (req, res) => {
-  res.send(await cancelJob(agenda, req.body));
+  // res.send(await cancelJob(agenda, req.body));
 })
 
 pushRouter.post("/modifyJob", jsonParser, async(req, res) =>{
-  res.send(await modifyJob(agenda, req.body));
+  // res.send(await modifyJob(agenda, req.body));
 })
 
 export { pushRouter }

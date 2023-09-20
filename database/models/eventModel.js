@@ -116,7 +116,7 @@ EventSchema.method('create_message', async function(params){
   t: try{
     const {message} = params;
     if(!message.title || !message.body){
-      result.err = "Need to provide both title and body fields (even if they're empty)!";
+      result.err = "Need to provide both title and body fields!";
       break t;
     }
     this.push_notif_message = {message};
@@ -138,16 +138,18 @@ EventSchema.method('create_message', async function(params){
 EventSchema.method('set_message_schedule', async function(params){
   let result = {success: false}
   t: try{
-    const env = process.env["NODE_ENV"];
-    await setup_agenda(env);
-    const res = await scheduleSendMessage(params, this.push_notif_message.message);
-    let job = streamline({
-      attrs: res.agenda
-    })
-    this.push_notif_message.schedule = job;
-    this.push_notif_message._id = job._id;
-    this.push_notif_message.device_tokens = job.device_tokens;
-    this.push_notif_message.message = job.message;
+
+    params['message'] = this.push_notif_message.message;
+    console.log(params)
+    const res = await scheduleSendMessage(params);
+    // let job = streamline({
+    //   attrs: res.agenda
+    // })
+    // this.push_notif_message.schedule = job;
+    // this.push_notif_message._id = job._id;
+    // this.push_notif_message.device_tokens = job.device_tokens;
+    // this.push_notif_message.message = job.message;
+    console.log(res);
     const saved = await this.save();
     if(saved){
       result.success = true
