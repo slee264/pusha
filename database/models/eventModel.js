@@ -30,11 +30,11 @@ const EventSchema = new Schema({
           timezone: {type: String},
           startDate: {type: String},
           repeatAt: {type: String},
-          runAt: {type: String}
+          nextRunAt: {type: String}
         },
         required: false
       },
-      device_tokens: {type: [String], _id: false,}
+      device_token: {type: String, _id: false}
     },
     required: false
   },
@@ -140,16 +140,19 @@ EventSchema.method('set_message_schedule', async function(params){
   t: try{
 
     params['message'] = this.push_notif_message.message;
-    console.log(params)
+    // console.log(params)
     const res = await scheduleSendMessage(params);
-    // let job = streamline({
-    //   attrs: res.agenda
-    // })
-    // this.push_notif_message.schedule = job;
-    // this.push_notif_message._id = job._id;
-    // this.push_notif_message.device_tokens = job.device_tokens;
-    // this.push_notif_message.message = job.message;
-    console.log(res);
+    let job = res.job.attrs;
+    // console.log(job.nextRunAt.toISOString())
+    this.push_notif_message.schedule = {
+      "nextRunAt": job.nextRunAt.toISOString(),
+      "repeatInterval": job.repeatInterval,
+      "repeatAt": job.repeatAt
+    };
+    this.push_notif_message._id = job._id;
+    this.push_notif_message.device_token = job.data.device_token;
+    this.push_notif_message.message = job.data.message;
+    // console.log(res);
     const saved = await this.save();
     if(saved){
       result.success = true

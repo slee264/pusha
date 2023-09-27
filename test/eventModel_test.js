@@ -125,25 +125,23 @@ describe('Event', async function (){
         "device_token": "e1HdqEmXjFxywCA79C5zQ2:APA91bHMJl52G0v9Qy8peINPRQrjySiISgH8oae83ElqJ0GD5XU1zRnxqBYIN6_8bKJW7UZi_vNirPc6DmIF5UwaeNhjGvX2k5Esmxc77y_fin1tmiaHlN4u-8z74rCX1Rdh1kz2hAMq"
     }).then(res => {
       const { success, event } = res;
-      assert.equal(success, true)
-      // assert.equal(event.push_notif_message.schedule.repeat, true);
+      assert.equal(success, true);
+      // console.log(event);
       done();
     }).catch(err => done(err));
   })
   
-  it.skip('should set schedule for the event\'s push_notif_message that does not repeat', done => {
+  it('should set schedule for the event\'s push_notif_message that does not repeat', done => {
     created_event.set_message_schedule({
-      timezone: "America/New_York",
-      startDate: "2023-08-11",
-      hour: "23",
-      minute: "14",
-      repeat: "false",
-      repeatInterval: "5 minutes",
-      device_token: ["dqdsIORYBynOXknmZUQumD:APA91bE8zKu7QRSNPq3WdqFDraUDfwo9YSmmHTphAI2bDFV0I1OPaIbrT8CWQ7HzbLaXvcave7ajR1dhiYyaJIDyE3vK0eYwpC-53VjD0vamJM5ac9U5Krgyp-KIef7Lstf0qeqRH7aV"]
+      "runAt": "tomorrow at 6pm",
+      "repeat": false,
+      "repeatEvery": "5 minutes",
+      "repeatAt": "11:36PM",
+      "device_token": "e1HdqEmXjFxywCA79C5zQ2:APA91bHMJl52G0v9Qy8peINPRQrjySiISgH8oae83ElqJ0GD5XU1zRnxqBYIN6_8bKJW7UZi_vNirPc6DmIF5UwaeNhjGvX2k5Esmxc77y_fin1tmiaHlN4u-8z74rCX1Rdh1kz2hAMq"
     }).then(res => {
       const { success, event } = res;
       assert.equal(success, true)
-      assert.equal(event.push_notif_message.schedule.repeat, false);
+      // console.log(event);
       done();
     }).catch(err => done(err));
   })
