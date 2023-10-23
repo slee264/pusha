@@ -1,3 +1,6 @@
+## Pusha
+A platform that facilitates collaborative management, creation, and scheduling of customer push notifications, bridging the gap between programmers and non-programmers
+
 ### Create a job: in JSON format,
   #### Whether you want your job to be repeated
   * If repeat !== "true", this will be ignored and default to "false".
